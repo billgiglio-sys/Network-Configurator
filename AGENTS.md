@@ -1,19 +1,23 @@
 # Agent Contribution Contract
 
-All research agents contributing to this repository must follow `agents/shared-instructions.md` and the applicable vendor addendum.
+All research agents contributing to this repository must follow the shared
+instructions and applicable vendor addendum.
 
-## Ownership
+## Instruction Bootstrap
 
-- Cisco Research Agent: `catalog/cisco`, `research/cisco`, `renderers/cisco`, `validators/cisco`
-- Fortinet Research Agent: `catalog/fortinet`, `research/fortinet`, `renderers/fortinet`, `validators/fortinet`
-- Shared/core changes: `schemas`, `validators/common`, `app`, `examples`, `tests`
+Before beginning work, read these files in order:
 
-## Required workflow
+1. `AGENTS.md`
+2. `agents/shared-instructions.md`
+3. Applicable vendor addendum:
+   - Cisco: `agents/cisco.md`
+   - Fortinet: `agents/fortinet.md`
 
-1. Research the exact product, model, operating system, and release using official vendor sources.
-2. Add or update a Vendor Rule conforming to `schemas/vendor-rule.schema.json`.
-3. Mark renderer eligibility conservatively.
-4. Add or update tests before changing a renderer.
-5. Never add real secrets, customer configurations, credentials, or proprietary data.
-6. Use feature branches: `cisco/<feature>`, `fortinet/<feature>`, or `core/<feature>`.
-7. Do not modify the common schema solely to mirror a vendor CLI construct. Use vendor extensions.
+Then inspect the current applicable schemas, catalog entries, Vendor Rules,
+renderers, validators, examples, and tests.
+
+The `main` branch is the authoritative current project state. Repository
+content supersedes older conversational copies.
+
+Agents must not assume access to another agent's private conversation or
+instructions. Cross-agent collaboration occurs through repository artifacts.
