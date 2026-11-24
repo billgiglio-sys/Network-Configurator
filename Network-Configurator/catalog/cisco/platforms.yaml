@@ -1,0 +1,56 @@
+platforms:
+  - id: catalyst_3850
+    category: switch
+    family: catalyst_3850
+    models: [WS-C3850-24P, WS-C3850-48P, WS-C3850-24T, WS-C3850-48T, WS-C3850-12X48U, WS-C3850-24XU]
+    os_family: ios_xe
+    versions: [16.12.16, 16.12.15, 16.12.14, 16.12.13, 16.12.12, 16.12.11, 16.12.10a, 16.12.10, 16.12.9]
+    renderer: cisco/ios-xe/switch.j2
+    lifecycle: end_of_support
+    capabilities: [l2, l3, poe, svi, static, ospf, snmpv3, netconf, stackwise_480, stackpower]
+  - id: catalyst_9300
+    category: switch
+    family: catalyst_9300
+    models: [C9300L-24P-4G, C9300L-48P-4G, C9300-24P, C9300-48P, C9300X-24Y]
+    os_family: ios_xe
+    versions: [17.12.4, 17.15.4, 17.18.1]
+    renderer: cisco/ios-xe/switch.j2
+    lifecycle: current
+    capabilities: [l2, l3, poe, svi, static, ospf, bgp, snmpv3, netconf, restconf, stackwise]
+  - id: catalyst_8300
+    category: router
+    family: catalyst_8300
+    models: [C8300-1N1S-4T2X, C8300-2N2S-4T2X, C8300-2N2S-6T]
+    os_family: ios_xe
+    versions: [17.12.4, 17.15.4, 17.18.1]
+    renderer: cisco/ios-xe/router.j2
+    lifecycle: current
+    capabilities: [l3, static, ospf, bgp, vrf, nat, snmpv3, netconf, restconf]
+  - id: cisco_3504
+    category: wireless_controller
+    family: '3504'
+    models: [AIR-CT3504-K9]
+    os_family: aireos
+    versions: [8.10.196.0]
+    renderer: cisco/aireos/controller.j2
+    lifecycle: end_of_sale
+    last_support: '2027-01-31'
+    capabilities: [wireless_controller, wlan, dynamic_interface, ap_group, wpa3_sae, wpa2_wpa3_transition]
+  - id: catalyst_9130ax
+    category: access_point
+    family: catalyst_9100
+    models: [C9130AXI-B, C9130AXE-B]
+    os_family: managed_ap
+    versions: [controller]
+    renderer: cisco/aireos/managed-ap.j2
+    lifecycle: current
+    capabilities: [wifi6, managed_ap, wpa3_sae]
+  - id: catalyst_9800
+    category: wireless_controller
+    family: catalyst_9800
+    models: [C9800-L-C-K9, C9800-L-F-K9, C9800-40-K9, C9800-80-K9, C9800-CL]
+    os_family: ios_xe
+    versions: [17.12.4, 17.15.4, 17.18.1]
+    renderer: cisco/ios-xe/wlc.j2
+    lifecycle: current
+    capabilities: [wireless_controller, wlan, policy_profile, tags, wpa3_sae, snmpv3, netconf]

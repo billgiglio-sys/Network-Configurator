@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FortiGate Config Builder</title>
+<style>
+:root{--bg:#eef1f5;--panel:#fff;--bd:#d9dee6;--tx:#1f2933;--mut:#64707d;--side:#26303c;--side2:#1d252e;--ac:#3aa655;--ac2:#2c8a45;--bl:#2f6fdb;--rd:#c8372d;--am:#b7791f;--code:#0f1720}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);background:var(--bg)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+code{background:#e8ecf1;padding:0 4px;border-radius:3px}
+#app{display:grid;grid-template-columns:210px minmax(0,1fr) minmax(360px,42%);grid-template-rows:auto auto 1fr;height:100vh}
+#top{grid-column:1/-1;background:var(--side2);color:#e6ebf0;display:flex;align-items:center;gap:12px;padding:8px 14px;flex-wrap:wrap}
+#top .logo{font-weight:700;letter-spacing:.2px}#top .logo span{color:var(--ac)}
+#top input{background:#2f3a47;border:1px solid #3b4756;color:#fff;border-radius:4px;padding:5px 8px;width:200px}
+#top .sp{flex:1}
+#devbar{grid-column:1/-1;background:#2d3743;display:flex;gap:4px;padding:6px 14px 0;flex-wrap:wrap}
+.dev{background:#3a4552;color:#cfd7df;border:0;border-radius:5px 5px 0 0;padding:6px 12px;cursor:pointer;text-align:left;font:inherit}
+.dev small{display:block;color:#93a0ad;font-size:10.5px}.dev.on{background:var(--bg);color:var(--tx)}.dev.on small{color:var(--mut)}
+.dev.add{background:transparent;color:#93a0ad;align-self:center;padding:6px 10px}.dev.add:hover{color:#fff}.dev.add.danger:hover{color:#ff8a80}
+#nav{background:var(--side);padding:10px 0;overflow:auto}
+.ng{color:#8a97a5;font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;padding:12px 16px 4px}
+.ni{display:block;padding:7px 16px;color:#d4dbe3;text-decoration:none;border-left:3px solid transparent}
+.ni:hover{background:#2f3b48}.ni.on{background:#34424f;border-left-color:var(--ac);color:#fff;font-weight:600}
+#main{overflow:auto;padding:14px;min-width:0}
+#out{background:var(--code);color:#d6dee7;display:flex;flex-direction:column;min-width:0;min-height:0}
+#otabs{display:flex;gap:2px;padding:8px 10px 0;background:#161f29;align-items:center}
+.ot{background:transparent;color:#93a0ad;border:0;padding:7px 12px;cursor:pointer;font:inherit;border-radius:5px 5px 0 0}.ot.on{background:var(--code);color:#fff}.ot small{opacity:.6;margin-left:4px}
+.bd{display:inline-block;border-radius:9px;padding:0 6px;margin-left:4px;font-size:11px;color:#fff}.bd.red{background:var(--rd)}.bd.amber{background:var(--am)}.bd.green{background:var(--ac2)}
+#otools{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #223040}
+#otools label{color:#93a0ad;display:flex;align-items:center;gap:4px;margin-left:auto}
+#cli,#chk{flex:1;overflow:auto;margin:0;padding:12px 14px;min-height:0}
+#cli{white-space:pre;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;tab-size:4}
+#cli .c{color:#6b7c8d}#cli .k{color:#7cc4ff}#cli .s{color:#e6b673}
+.ck{padding:7px 10px;margin-bottom:6px;border-radius:5px;border-left:3px solid;background:#18222d;font-size:12.5px}
+.ck.err{border-color:var(--rd)}.ck.warn{border-color:#e0a33a}.ck.info{border-color:#4a90e2;color:#b9c6d3}.ck b{margin-right:6px;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:6px;padding:12px 14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:14px}.card h4{margin:14px 0 6px;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.frow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.fld{display:flex;flex-direction:column;gap:3px;min-width:130px;flex:0 1 190px}.fld.grow{flex:1 1 320px}
+.fld>label{font-size:11.5px;color:var(--mut);font-weight:600}
+input[type=text],input[type=number],select,textarea,input:not([type]){width:100%;border:1px solid #c5ccd6;border-radius:4px;padding:5px 7px;font:inherit;background:#fff;color:var(--tx);min-height:29px}
+textarea{resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #9bd3ab;border-color:var(--ac)}
+.chk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer}.chks{display:flex;flex-wrap:wrap;gap:4px 14px;padding:4px 0}
+.hint{color:var(--mut);font-size:12px;margin:4px 0}.lock{color:var(--mut);font-style:italic;padding:6px 0}
+.bundles{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.lics{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 12px}
+.btn{border:1px solid #bcc5d0;background:#f6f8fa;border-radius:4px;padding:5px 11px;cursor:pointer;font:inherit;color:var(--tx)}.btn:hover{background:#e9edf2}
+.btn.primary{background:var(--ac);border-color:var(--ac2);color:#fff}.btn.primary:hover{background:var(--ac2)}.btn.danger{color:var(--rd)}
+.btn.ico{padding:2px 7px;min-width:26px}.btn.sm{padding:3px 9px;font-size:12px}
+#out .btn{background:#26323f;border-color:#3a4857;color:#e6ebf0}#out .btn:hover{background:#31404f}#out .btn.primary{background:var(--ac);border-color:var(--ac2)}
+#top .btn{background:#34424f;border-color:#445466;color:#e6ebf0}#top .btn:hover{background:#405062}
+.tw{overflow-x:auto;margin-bottom:8px}
+table.grid{border-collapse:collapse;width:100%}.grid th{background:#f1f4f8;text-align:left;font-size:11.5px;color:var(--mut);padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.grid td{padding:4px 6px;border-bottom:1px solid #edf0f4;vertical-align:middle}.grid td input,.grid td select{min-width:70px}.grid td input[type=checkbox]{width:auto;min-width:0}
+.grid tr.sel{cursor:pointer}.grid tr.sel:hover{background:#f5f9f6}.grid tr.sel.on{background:#e6f4ea}
+.empty{color:var(--mut);text-align:center;padding:14px!important}.ra{text-align:right}.nw{white-space:nowrap}.rt{text-align:right;margin-top:8px}
+.pill{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;background:#e5e9ee;color:#455}.pill.green{background:#dcf1e2;color:#1f6b37}.pill.red{background:#f9dedb;color:#9b2820}.pill.blue{background:#dde8fa;color:#244f9e}.pill.amber{background:#faecd0;color:#8a5a0c}.pill.gray{background:#eceff2;color:#7a8794}
+details.ms{position:relative;min-width:110px}details.ms summary{list-style:none;border:1px solid #c5ccd6;border-radius:4px;padding:5px 24px 5px 7px;cursor:pointer;background:#fff;min-height:29px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;position:relative}
+details.ms summary::after{content:"▾";position:absolute;right:8px;color:var(--mut)}details.ms summary::-webkit-details-marker{display:none}
+details.ms .pop{position:absolute;z-index:20;background:#fff;border:1px solid #aeb8c4;border-radius:5px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:8px;max-height:260px;overflow:auto;min-width:200px;display:flex;flex-direction:column;gap:4px;top:100%;left:0}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2933;color:#fff;padding:8px 16px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}#toast.on{opacity:1}
+.disc{font-size:11px;color:#93a0ad}
+@media(max-width:1150px){#app{grid-template-columns:180px minmax(0,1fr);grid-template-rows:auto auto minmax(380px,1fr) 480px;height:auto;min-height:100vh}#out{grid-column:1/-1;grid-row:4}#nav{grid-row:3}#main{grid-row:3}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <div class="logo">FortiGate <span>Config Builder</span></div>
+    <input id="proj" type="text" aria-label="Project name" placeholder="Project / client name">
+    <span class="sp"></span>
+    <button class="btn" data-act="loadproj">Open project</button>
+    <button class="btn" data-act="dlproj">Save project</button>
+    <span class="disc">Unofficial tool. Not affiliated with Fortinet.</span>
+  </div>
+  <div id="devbar"></div>
+  <nav id="nav"></nav>
+  <main id="main"></main>
+  <aside id="out">
+    <div id="otabs"></div>
+    <div id="otools">
+      <button class="btn primary sm" data-act="copy">Copy CLI</button>
+      <button class="btn sm" data-act="dlone">Download .conf</button>
+      <button class="btn sm" data-act="dlall">All devices (.zip)</button>
+      <label><input type="checkbox" id="cmt" checked> comments</label>
+    </div>
+    <pre id="cli"></pre>
+    <div id="chk"></div>
+  </aside>
+</div>
+<input type="file" id="file" accept=".json" style="display:none">
+<div id="toast"></div>
+<script>'use strict';
+(function (root) {
+const FG = {};
+
+/* ============================ helpers ============================ */
+const q = s => '"' + String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+const qs = a => (a || []).map(q).join(' ');
+const uniq = a => Array.from(new Set(a));
+const isIP = s => { const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec((s || '').trim()); return !!m && m.slice(1).every(x => +x <= 255); };
+const ip2n = s => { const p = s.trim().split('.').map(Number); return ((p[0] * 256 + p[1]) * 256 + p[2]) * 256 + p[3]; };
+const n2ip = n => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+const pfx2mask = p => { p = +p; if (!(p >= 0 && p <= 32)) return null; return n2ip(p === 0 ? 0 : (0xFFFFFFFF << (32 - p)) >>> 0); };
+const mask2pfx = m => { if (!isIP(m)) return null; const n = ip2n(m); let c = 0, z = false; for (let i = 31; i >= 0; i--) { const b = Math.floor(n / Math.pow(2, i)) % 2; if (b) { if (z) return null; c++; } else z = true; } return c; };
+function parseCidr(s, bare) {
+  s = (s || '').trim(); if (!s) return null; let m;
+  if ((m = /^(\S+)\/(\d{1,2})$/.exec(s))) { if (!isIP(m[1]) || +m[2] > 32) return null; return { ip: m[1], mask: pfx2mask(m[2]), pfx: +m[2] }; }
+  if ((m = /^(\S+)\s+(\S+)$/.exec(s))) { if (!isIP(m[1])) return null; const p = mask2pfx(m[2]); if (p === null) return null; return { ip: m[1], mask: m[2], pfx: p }; }
+  if (bare && isIP(s)) return { ip: s, mask: '255.255.255.255', pfx: 32 };
+  return null;
+}
+const netN = c => { const mk = ip2n(c.mask); return (ip2n(c.ip) & mk) >>> 0; };
+const inNet = (ip, c) => isIP(ip) && ((ip2n(ip) & ip2n(c.mask)) >>> 0) === netN(c);
+const splitList = s => (s || '').split(/[,\n;]+/).map(x => x.trim()).filter(Boolean);
+const ipm = s => { const c = parseCidr(s, true); return c ? c.ip + ' ' + c.mask : null; };
+FG.util = { q, isIP, parseCidr, pfx2mask, mask2pfx, splitList, inNet, uniq };
+
+/* ============================ data ============================ */
+const rng = (p, a, b) => Array.from({ length: b - a + 1 }, (_, i) => p + (a + i)).join(' ');
+FG.MODELS = [
+  { id: 'FG-40F', name: 'FortiGate 40F', ram: 2, ports: 'wan internal1 internal2 internal3 a', lan: 'internal1 internal2 internal3' },
+  { id: 'FG-60F', name: 'FortiGate 60F', ram: 2, ports: 'wan1 wan2 dmz ' + rng('internal', 1, 5) + ' a b', lan: rng('internal', 1, 5) },
+  { id: 'FG-61F', name: 'FortiGate 61F', ram: 2, ports: 'wan1 wan2 dmz ' + rng('internal', 1, 5) + ' a b', lan: rng('internal', 1, 5) },
+  { id: 'FG-70F', name: 'FortiGate 70F', ram: 4, ports: 'wan1 wan2 dmz ' + rng('internal', 1, 5) + ' a b', lan: rng('internal', 1, 5) },
+  { id: 'FG-80F', name: 'FortiGate 80F', ram: 4, ports: 'wan1 wan2 dmz ' + rng('internal', 1, 8), lan: rng('internal', 1, 8) },
+  { id: 'FG-100F', name: 'FortiGate 100F/101F', ram: 4, ports: 'wan1 wan2 dmz ha1 ha2 mgmt ' + rng('port', 1, 16) + ' x1 x2 s1 s2', lan: '' },
+  { id: 'FG-200F', name: 'FortiGate 200F/201F', ram: 8, ports: 'mgmt ha1 ha2 wan1 wan2 ' + rng('port', 1, 16) + ' x1 x2 x3 x4', lan: '' },
+  { id: 'FG-400F', name: 'FortiGate 400F/401F', ram: 16, ports: 'mgmt ha1 ha2 ' + rng('port', 1, 16) + ' x1 x2 x3 x4', lan: '' },
+  { id: 'FG-600F', name: 'FortiGate 600F/601F', ram: 16, ports: 'mgmt ha1 ha2 ' + rng('port', 1, 16) + ' x1 x2 x3 x4', lan: '' },
+  { id: 'FG-VM', name: 'FortiGate-VM (any hypervisor)', ram: 4, ports: rng('port', 1, 4), lan: '' },
+  { id: 'CUSTOM', name: 'Other / custom port list', ram: 0, ports: rng('port', 1, 8), lan: '' }
+];
+FG.VERSIONS = ['6.4', '7.0', '7.2', '7.4', '7.6'];
+FG.ACCESS = ['ping', 'https', 'ssh', 'http', 'telnet', 'snmp', 'fgfm', 'fabric', 'ftm', 'speed-test', 'radius-acct', 'probe-response'];
+FG.LICS = [
+  { id: 'forticare', n: 'FortiCare support (hardware)' },
+  { id: 'ips', n: 'IPS' }, { id: 'appctrl', n: 'Application Control' }, { id: 'av', n: 'Antivirus' },
+  { id: 'webf', n: 'Web / Video Filtering' }, { id: 'dnsf', n: 'DNS Filtering' }, { id: 'asp', n: 'Anti-Spam' },
+  { id: 'sbox', n: 'FortiSandbox Cloud' }, { id: 'dlp', n: 'DLP' }, { id: 'iot', n: 'IoT / Industrial / Attack Surface' },
+  { id: 'fgc', n: 'FortiGate Cloud logging' }, { id: 'fazc', n: 'FortiAnalyzer Cloud' }
+];
+FG.BUNDLES = {
+  none: [], hw: ['forticare'],
+  atp: ['forticare', 'ips', 'appctrl', 'av', 'sbox'],
+  utp: ['forticare', 'ips', 'appctrl', 'av', 'sbox', 'webf', 'dnsf', 'asp'],
+  ent: ['forticare', 'ips', 'appctrl', 'av', 'sbox', 'webf', 'dnsf', 'asp', 'dlp', 'iot', 'fgc', 'fazc']
+};
+FG.PROFILES = {
+  av:    { key: 'av-profile', lic: 'av', n: 'Antivirus', opts: ['default', 'wifi-default'] },
+  web:   { key: 'webfilter-profile', lic: 'webf', n: 'Web filter', opts: ['default', 'monitor-all', 'wifi-default'] },
+  dns:   { key: 'dnsfilter-profile', lic: 'dnsf', n: 'DNS filter', opts: ['default'] },
+  ips:   { key: 'ips-sensor', lic: 'ips', n: 'IPS', opts: ['default', 'all_default', 'all_default_pass', 'protect_client', 'protect_email_server', 'protect_http_server', 'wifi-default'] },
+  app:   { key: 'application-list', lic: 'appctrl', n: 'Application control', opts: ['default', 'block-high-risk', 'wifi-default'] },
+  email: { key: 'emailfilter-profile', lic: 'asp', n: 'Email filter', opts: ['default', 'wifi-default'] },
+  dlp:   { key: 'dlp-profile', lic: 'dlp', n: 'DLP', opts: ['default'] }
+};
+FG.SSL = ['certificate-inspection', 'deep-inspection', 'no-inspection'];
+FG.BUILTIN_SVC = ['ALL', 'ALL_TCP', 'ALL_UDP', 'ALL_ICMP', 'DNS', 'DHCP', 'FTP', 'HTTP', 'HTTPS', 'IMAP', 'IMAPS', 'LDAP', 'NTP', 'PING', 'POP3', 'POP3S', 'RADIUS', 'RDP', 'SIP', 'SMB', 'SMTP', 'SMTPS', 'SNMP', 'SSH', 'SYSLOG', 'TELNET', 'TFTP', 'TRACEROUTE', 'MS-SQL', 'MYSQL'];
+FG.TZ = ['US/Eastern', 'US/Central', 'US/Mountain', 'US/Pacific', 'US/Arizona', 'US/Alaska', 'US/Hawaii', 'UTC', 'Europe/London', 'Europe/Berlin', 'Europe/Paris', 'Asia/Tokyo', 'Australia/Sydney'];
+
+/* ============================ state ============================ */
+let _id = 1; const uid = () => 'd' + Date.now().toString(36) + (_id++);
+const model = d => FG.MODELS.find(m => m.id === d.model) || FG.MODELS[FG.MODELS.length - 1];
+const vge = (d, v) => parseFloat(d.version) >= parseFloat(v);
+FG.model = model; FG.vge = vge;
+
+function newIface(name, type) {
+  return { name, type: type || 'physical', role: 'undefined', alias: '', mode: 'unused', ip: '', allow: [], desc: '', mtu: '', down: false,
+    pppoeUser: '', pppoePass: '', defgw: true, dist: '', estUp: '', estDown: '', parent: '', vid: '', members: [], lacp: 'active',
+    dhcp: { on: false, start: '', end: '', gw: '', dnsMode: 'default', dns1: '', dns2: '', lease: 86400, domain: '', res: [] } };
+}
+FG.newIface = newIface;
+function newDevice(modelId) {
+  const d = {
+    id: uid(), model: modelId || 'FG-60F', portsText: '', version: '7.4', patch: '', lic: { forticare: true }, dissolveLan: true, polStart: 1,
+    sys: { hostname: 'FW-01', tz: 'US/Eastern', admintimeout: 30, httpsPort: 443, httpPort: 80, sshPort: 22, httpsRedirect: true, lockout: true, strongCrypto: true,
+      banner: '', dns1: '1.1.1.1', dns2: '8.8.8.8', domain: '', ntpOn: true, ntp: 'pool.ntp.org', ntpSrv: false, ntpIntfs: [], fmg: '', adminPw: '', adminTrust: '' },
+    ifaces: [], zones: [], routes: [], addrs: [], addrgrps: [], svcs: [], svcgrps: [], vips: [], pools: [], policies: [], vpns: [], admins: [], users: [], radius: [], ugroups: [], ra: [],
+    sdwan: { on: false, defRoute: true, zones: [], members: [], hcs: [], rules: [] },
+    bgp: { on: false, as: '', rid: '', neighbors: [], networks: [], redistConn: false, redistStatic: false },
+    ospf: { on: false, rid: '', networks: [], passive: [], redistConn: false, redistStatic: false, defOrig: false },
+    snmp: { on: false, desc: '', contact: '', loc: '', comms: [], v3: [] },
+    syslog: { on: false, server: '', port: 514, mode: 'udp', facility: 'local7', format: 'default' },
+    faz: { on: false, server: '', upload: 'realtime' }, fgcloud: false,
+    ha: { on: false, group: 'HA-' + 'GRP', id: 1, mode: 'a-p', pw: '', prio: 128, hb: [], mon: [], pickup: true, override: false }
+  };
+  d.portsText = model(d).ports; syncPorts(d); return d;
+}
+function portNames(d) { return (d.portsText || '').split(/[\s,]+/).filter(Boolean); }
+function syncPorts(d) {
+  const old = {}; d.ifaces.filter(i => i.type === 'physical' || i.type === 'switch').forEach(i => old[i.name] = i);
+  const phys = portNames(d).map(n => old[n] || newIface(n, 'physical'));
+  const m = model(d);
+  if (m.lan) phys.push(old.lan && old.lan.type === 'switch' ? old.lan : Object.assign(newIface('lan', 'switch'), { role: 'lan' }));
+  d.ifaces = phys.concat(d.ifaces.filter(i => i.type !== 'physical' && i.type !== 'switch'));
+}
+function lanMembers(d) { const m = model(d); return m.lan ? m.lan.split(' ') : []; }
+function act(d) { // interfaces that exist given factory-LAN choice
+  const lm = lanMembers(d);
+  return d.ifaces.filter(i => i.type === 'switch' ? (!d.dissolveLan && lm.length) : !( !d.dissolveLan && lm.includes(i.name)));
+}
+FG.migrate = d => { ['users', 'radius', 'ugroups', 'ra'].forEach(k => { if (!d[k]) d[k] = []; }); return d; };
+FG.newDevice = newDevice; FG.syncPorts = syncPorts; FG.act = act; FG.lanMembers = lanMembers; FG.portNames = portNames;
+
+/* ---- name universes ---- */
+const sdwanZones = d => d.sdwan.on ? uniq(['virtual-wan-link'].concat(d.sdwan.zones.map(z => z.name).filter(Boolean))) : [];
+const sdwanMembers = d => d.sdwan.on ? d.sdwan.members.filter(m => m.en !== false).map(m => m.intf) : [];
+const zoneMembers = d => d.zones.reduce((a, z) => a.concat(z.members || []), []);
+function intfChoices(d) {
+  const zm = zoneMembers(d);
+  return uniq(act(d).map(i => i.name).filter(n => !zm.includes(n)).concat(d.zones.map(z => z.name), sdwanZones(d), d.vpns.map(v => v.name), (d.ra || []).map(v => v.name), ['any']).filter(Boolean));
+}
+function addrChoices(d) {
+  const dv = vpnDerive(d);
+  return uniq(['all'].concat(d.addrs.map(a => a.name), d.addrgrps.map(a => a.name), d.vips.map(a => a.name), dv.addrs.map(a => a.name), dv.groups.map(a => a.name)).filter(Boolean));
+}
+const svcChoices = d => uniq(FG.BUILTIN_SVC.concat(d.svcs.map(s => s.name), d.svcgrps.map(s => s.name)).filter(Boolean));
+FG.intfChoices = intfChoices; FG.addrChoices = addrChoices; FG.svcChoices = svcChoices; FG.sdwanZones = sdwanZones;
+
+/* ---- VPN derived objects ---- */
+function vpnNames(v) { const L = splitList(v.localSubs), R = splitList(v.remoteSubs); return { L, R, ln: L.length > 1 ? v.name + '_LOCAL' : v.name + '_LOCAL_1', rn: R.length > 1 ? v.name + '_REMOTE' : v.name + '_REMOTE_1' }; }
+function vpnDerive(d) {
+  const out = { addrs: [], groups: [], routes: [], policies: [] };
+  d.vpns.forEach(v => {
+    if (!v.name) return; const n = vpnNames(v);
+    [['LOCAL', n.L], ['REMOTE', n.R]].forEach(([t, arr]) => {
+      arr.forEach((s, i) => out.addrs.push({ name: v.name + '_' + t + '_' + (i + 1), type: 'subnet', val: s, comment: 'VPN ' + v.name + ' ' + t.toLowerCase() }));
+      if (arr.length > 1) out.groups.push({ name: v.name + '_' + t, members: arr.map((s, i) => v.name + '_' + t + '_' + (i + 1)), comment: 'VPN ' + v.name });
+    });
+    if (v.addRoute) n.R.forEach(s => {
+      out.routes.push({ en: true, dst: s, gw: '', dev: v.name, dist: v.routeDist || 10, prio: 1, blackhole: false, comment: 'VPN ' + v.name });
+      if (v.blackhole) out.routes.push({ en: true, dst: s, gw: '', dev: '', dist: 254, prio: 1, blackhole: true, comment: 'VPN ' + v.name + ' blackhole' });
+    });
+    if (v.addPolicies) {
+      const base = { en: true, srcaddr: [], dstaddr: [], svc: ['ALL'], action: 'accept', nat: false, ippool: '', log: v.log || 'all', ssl: '', mode: 'flow', comment: 'auto: VPN ' + v.name };
+      out.policies.push(Object.assign({}, base, { name: 'VPN-' + v.name + '-out', src: [v.polIntf || 'any'], dst: [v.name], srcaddr: [n.ln], dstaddr: [n.rn] }));
+      out.policies.push(Object.assign({}, base, { name: 'VPN-' + v.name + '-in', src: [v.name], dst: [v.polIntf || 'any'], srcaddr: [n.rn], dstaddr: [n.ln] }));
+    }
+  });
+  (d.ra || []).forEach(r => {
+    if (!r.name) return; const sp = r.split || [];
+    out.addrs.push({ name: r.name + '_range', type: 'iprange', val: (r.start || '') + '-' + (r.end || ''), comment: 'FortiClient pool ' + r.name });
+    if (sp.length > 1) out.groups.push({ name: r.name + '_SPLIT', members: sp.slice(), comment: 'FortiClient split tunnel ' + r.name });
+    out.policies.push({ name: 'VPN-' + r.name, en: true, src: [r.name], dst: [r.lanIntf || 'any'], srcaddr: [r.name + '_range'], dstaddr: (r.dest && r.dest.length) ? r.dest : (sp.length ? sp : ['all']), svc: ['ALL'], groups: r.group ? [r.group] : [], action: 'accept', nat: false, ippool: '', log: r.log || 'all', ssl: '', mode: 'flow', comment: 'auto: FortiClient ' + r.name });
+  });
+  return out;
+}
+FG.vpnDerive = vpnDerive;
+
+/* ============================ emitter ============================ */
+function Out(comments) {
+  const L = []; let dp = 0; const I = () => '    '.repeat(dp);
+  const o = {
+    L, c(s) { if (comments) L.push(I() + '# ' + s); },
+    blank() { if (L.length && L[L.length - 1] !== '') L.push(''); },
+    raw(s) { L.push(I() + s); },
+    cfg(t, fn) { L.push(I() + 'config ' + t); dp++; fn(); dp--; L.push(I() + 'end'); },
+    edit(n, fn) { L.push(I() + 'edit ' + (typeof n === 'number' ? n : q(n))); dp++; fn(); dp--; L.push(I() + 'next'); },
+    set(k, v) { if (v === undefined || v === null || v === '') return; L.push(I() + 'set ' + k + ' ' + v); },
+    setq(k, v) { if (v === undefined || v === null || v === '') return; L.push(I() + 'set ' + k + ' ' + q(v)); },
+    setl(k, a) { if (!a || !a.length) return; L.push(I() + 'set ' + k + ' ' + qs(a)); },
+    en(k, b) { L.push(I() + 'set ' + k + ' ' + (b ? 'enable' : 'disable')); },
+    text() { return L.join('\n') + '\n'; }
+  };
+  return o;
+}
+
+function allRoutes(d) {
+  const r = [];
+  if (d.sdwan.on && d.sdwan.defRoute) {
+    sdwanZones(d).forEach(z => { if (d.sdwan.members.some(m => m.en !== false && (m.zone || 'virtual-wan-link') === z)) r.push({ en: true, dst: '0.0.0.0/0', gw: '', dev: z, dist: 10, prio: 1, blackhole: false, comment: 'SD-WAN default' }); });
+  }
+  return r.concat(d.routes, vpnDerive(d).routes);
+}
+FG.allRoutes = allRoutes;
+const allPolicies = d => d.policies.concat(vpnDerive(d).policies);
+
+FG.gen = function (d, opts) {
+  opts = opts || {};
+  const o = Out(opts.comments !== false), m = model(d), A = act(d), s = d.sys, v7 = vge(d, '7.0');
+  const used = i => i.mode && i.mode !== 'unused';
+  const lic = Object.keys(d.lic).filter(k => d.lic[k]);
+  o.c('FortiGate configuration script: ' + s.hostname);
+  o.c('Model: ' + m.id + '   FortiOS: ' + d.version + (d.patch ? '.' + d.patch : '.x') + (opts.date ? '   Generated: ' + opts.date : ''));
+  o.c('Licenses: ' + (lic.length ? lic.join(', ') : 'none'));
+  o.c('Paste into the CLI (SSH/console). Review first; interface/admin changes can drop your session.');
+  o.blank();
+
+  /* --- system global --- */
+  o.c('System global');
+  o.cfg('system global', () => {
+    o.setq('hostname', s.hostname);
+    o.setq('timezone', s.tz);
+    o.set('admintimeout', s.admintimeout);
+    o.set('admin-sport', s.httpsPort); o.set('admin-port', s.httpPort); o.set('admin-ssh-port', s.sshPort);
+    o.en('admin-https-redirect', s.httpsRedirect);
+    if (s.lockout) { o.set('admin-lockout-threshold', 5); o.set('admin-lockout-duration', 300); }
+    if (s.strongCrypto) o.en('strong-crypto', true);
+    if (s.banner) o.en('pre-login-banner', true);
+  });
+  if (s.banner) o.cfg('system replacemsg admin "pre_admin-disclaimer-text"', () => o.setq('buffer', s.banner));
+  o.blank();
+
+  /* --- dns / ntp --- */
+  o.c('DNS and NTP');
+  o.cfg('system dns', () => { o.set('primary', s.dns1); o.set('secondary', s.dns2); o.setq('domain', s.domain); });
+  if (s.ntpOn || s.ntpSrv) o.cfg('system ntp', () => {
+    if (s.ntpOn) {
+      o.en('ntpsync', true); o.set('type', 'custom'); o.set('syncinterval', 60);
+      o.cfg('ntpserver', () => splitList(s.ntp).forEach((h, i) => o.edit(i + 1, () => o.setq('server', h))));
+    }
+    if (s.ntpSrv) { o.en('server-mode', true); o.setl('interface', s.ntpIntfs); }
+  });
+  o.blank();
+
+  /* --- factory LAN teardown --- */
+  if (lanMembers(d).length && d.dissolveLan) {
+    o.c('Remove factory-default LAN hardware switch so internal ports can be used individually');
+    o.c('Verify defaults on the unit first: show system dhcp server / show firewall policy / show system virtual-switch');
+    o.cfg('system dhcp server', () => o.raw('delete 1'));
+    o.cfg('firewall policy', () => o.raw('delete 1'));
+    o.cfg('system virtual-switch', () => o.raw('delete "lan"'));
+    o.blank();
+  }
+
+  /* --- interfaces --- */
+  const ifs = A.filter(i => used(i) || (i.type !== 'physical' && i.type !== 'switch'));
+  const order = ['physical', 'switch', 'aggregate', 'loopback', 'vlan'];
+  const sorted = ifs.slice().sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
+  if (sorted.length) {
+    o.c('Interfaces');
+    o.cfg('system interface', () => sorted.forEach(i => o.edit(i.name, () => {
+      o.setq('vdom', 'root');
+      if (i.type === 'aggregate') { o.set('type', 'aggregate'); o.setl('member', i.members); o.set('lacp-mode', i.lacp); }
+      if (i.type === 'loopback') o.set('type', 'loopback');
+      if (i.type === 'vlan') { o.setq('interface', i.parent); o.set('vlanid', i.vid); }
+      const mode = i.mode === 'unused' ? 'static' : i.mode;
+      if (mode === 'dhcp') { o.set('mode', 'dhcp'); o.en('defaultgw', i.defgw); o.set('distance', i.dist); }
+      else if (mode === 'pppoe') { o.set('mode', 'pppoe'); o.setq('username', i.pppoeUser); o.setq('password', i.pppoePass); o.en('defaultgw', i.defgw); }
+      else if (mode === 'static') { o.set('mode', 'static'); const c = parseCidr(i.ip); if (c) o.set('ip', c.ip + ' ' + c.mask); }
+      if (i.allow.length) o.set('allowaccess', FG.ACCESS.filter(a => i.allow.includes(a)).join(' '));
+      o.setq('alias', i.alias); if (i.role && i.role !== 'undefined') o.set('role', i.role);
+      o.setq('description', i.desc);
+      if (i.mtu) { o.en('mtu-override', true); o.set('mtu', i.mtu); }
+      o.set('estimated-upstream-bandwidth', i.estUp); o.set('estimated-downstream-bandwidth', i.estDown);
+      if (i.down) o.set('status', 'down');
+    })));
+    o.blank();
+  }
+
+  /* --- zones --- */
+  if (d.zones.length) {
+    o.c('Zones');
+    o.cfg('system zone', () => d.zones.forEach(z => o.edit(z.name, () => { o.set('intrazone', z.intrazone || 'deny'); o.setl('interface', z.members); o.setq('description', z.comment); })));
+    o.blank();
+  }
+
+  /* --- DHCP --- */
+  const dh = A.filter(i => i.dhcp && i.dhcp.on && i.mode === 'static' && parseCidr(i.ip));
+  if (dh.length) {
+    o.c('DHCP servers');
+    let id = (lanMembers(d).length && d.dissolveLan) || !lanMembers(d).length ? 1 : 10;
+    o.cfg('system dhcp server', () => dh.forEach(i => {
+      const c = parseCidr(i.ip), h = i.dhcp; const sid = (i.type === 'switch') ? 1 : id++;
+      o.edit(sid, () => {
+        o.set('dns-service', h.dnsMode); if (h.dnsMode === 'specify') { o.set('dns-server1', h.dns1); o.set('dns-server2', h.dns2); }
+        o.set('default-gateway', h.gw || c.ip); o.set('netmask', c.mask); o.setq('interface', i.name);
+        o.cfg('ip-range', () => o.edit(1, () => { o.set('start-ip', h.start); o.set('end-ip', h.end); }));
+        o.set('lease-time', h.lease); o.setq('domain', h.domain);
+        if (h.res.length) o.cfg('reserved-address', () => h.res.forEach((r, k) => o.edit(k + 1, () => { o.set('ip', r.ip); o.set('mac', r.mac); o.setq('description', r.desc); })));
+      });
+    }));
+    o.blank();
+  }
+
+  /* --- address objects --- */
+  const dv = vpnDerive(d), addrs = d.addrs.concat(dv.addrs), grps = d.addrgrps.concat(dv.groups);
+  if (addrs.length) {
+    o.c('Address objects');
+    o.cfg('firewall address', () => addrs.forEach(a => o.edit(a.name, () => {
+      if (a.type === 'subnet') { const c = parseCidr(a.val, true); if (c) o.set('subnet', c.ip + ' ' + c.mask); }
+      else if (a.type === 'iprange') { const [x, y] = (a.val || '').split('-').map(t => t.trim()); o.set('type', 'iprange'); o.set('start-ip', x); o.set('end-ip', y); }
+      else if (a.type === 'fqdn') { o.set('type', 'fqdn'); o.setq('fqdn', a.val); }
+      else if (a.type === 'geography') { o.set('type', 'geography'); o.setq('country', a.val); }
+      o.setq('comment', a.comment);
+    })));
+    o.blank();
+  }
+  if (grps.length) { o.cfg('firewall addrgrp', () => grps.forEach(g => o.edit(g.name, () => { o.setl('member', g.members); o.setq('comment', g.comment); }))); o.blank(); }
+
+  /* --- VIPs / pools --- */
+  if (d.vips.length) {
+    o.c('Virtual IPs');
+    o.cfg('firewall vip', () => d.vips.forEach(x => o.edit(x.name, () => {
+      o.set('extip', x.extip); o.setq('extintf', x.extintf || 'any'); o.set('mappedip', x.mappedip ? q(x.mappedip) : '');
+      if (x.pf) { o.en('portforward', true); o.set('protocol', x.proto); o.set('extport', x.extport); o.set('mappedport', x.mappedport || x.extport); }
+      o.setq('comment', x.comment);
+    })));
+    o.blank();
+  }
+  if (d.pools.length) {
+    o.c('IP pools');
+    o.cfg('firewall ippool', () => d.pools.forEach(p => o.edit(p.name, () => { o.set('type', p.type); o.set('startip', p.start); o.set('endip', p.end || p.start); o.setq('comments', p.comment); })));
+    o.blank();
+  }
+
+  /* --- services --- */
+  if (d.svcs.length) {
+    o.c('Custom services');
+    o.cfg('firewall service custom', () => d.svcs.forEach(x => o.edit(x.name, () => {
+      o.set('tcp-portrange', (x.tcp || '').trim().replace(/[,]+/g, ' ')); o.set('udp-portrange', (x.udp || '').trim().replace(/[,]+/g, ' ')); o.setq('comment', x.comment);
+    })));
+    o.blank();
+  }
+  if (d.svcgrps.length) { o.cfg('firewall service group', () => d.svcgrps.forEach(g => o.edit(g.name, () => { o.setl('member', g.members); o.setq('comment', g.comment); }))); o.blank(); }
+
+  /* --- users / groups --- */
+  if (d.users.length || d.radius.length || d.ugroups.length) {
+    o.c('Users, RADIUS servers and groups');
+    if (d.radius.length) o.cfg('user radius', () => d.radius.forEach(x => o.edit(x.name, () => { o.setq('server', x.server); o.setq('secret', x.secret); })));
+    if (d.users.length) o.cfg('user local', () => d.users.forEach(u => o.edit(u.name, () => { o.set('type', 'password'); o.setq('passwd', u.pw); o.setq('email-to', u.email); })));
+    if (d.ugroups.length) o.cfg('user group', () => d.ugroups.forEach(g => o.edit(g.name, () => o.setl('member', g.members))));
+    o.blank();
+  }
+
+  /* --- IPsec --- */
+  if (d.vpns.length) {
+    o.c('IPsec VPN');
+    o.cfg('vpn ipsec phase1-interface', () => d.vpns.forEach(x => o.edit(x.name, () => {
+      o.setq('interface', x.intf); o.set('ike-version', x.ike);
+      if (x.type === 'dynamic') o.set('type', 'dynamic'); else if (x.type === 'ddns') { o.set('type', 'ddns'); o.setq('remotegw-ddns', x.gw); } else o.set('remote-gw', x.gw);
+      o.set('proposal', x.p1prop); o.set('dhgrp', x.dh); o.set('dpd', x.dpd); if (x.dpd !== 'disable') o.set('dpd-retryinterval', 10);
+      o.set('keylife', x.keylife); o.en('nattraversal', x.nat); o.setq('psksecret', x.psk); o.setq('comments', x.comment);
+    })));
+    o.cfg('vpn ipsec phase2-interface', () => d.vpns.forEach(x => o.edit(x.name, () => {
+      const n = vpnNames(x);
+      o.setq('phase1name', x.name); o.set('proposal', x.p2prop);
+      if (x.pfs) { o.en('pfs', true); o.set('dhgrp', x.p2dh); } else o.en('pfs', false);
+      o.set('keylifeseconds', x.p2life); o.en('auto-negotiate', true);
+      o.set('src-addr-type', 'name'); o.setq('src-name', n.ln); o.set('dst-addr-type', 'name'); o.setq('dst-name', n.rn);
+    })));
+    const tun = d.vpns.filter(x => isIP(x.tunLocal) && isIP(x.tunRemote));
+    if (tun.length) o.cfg('system interface', () => tun.forEach(x => o.edit(x.name, () => { o.set('ip', x.tunLocal + ' 255.255.255.255'); o.set('remote-ip', x.tunRemote + ' 255.255.255.252'); o.set('allowaccess', 'ping'); })));
+    o.blank();
+  }
+
+  if (d.ra.length) {
+    o.c('FortiClient remote access (IKEv1 aggressive + XAuth, PSK)');
+    o.cfg('vpn ipsec phase1-interface', () => d.ra.forEach(r => o.edit(r.name, () => {
+      o.set('type', 'dynamic'); o.setq('interface', r.intf); o.set('mode', 'aggressive'); o.set('peertype', 'any'); o.set('net-device', 'disable');
+      o.en('mode-cfg', true); o.set('proposal', r.prop); o.set('dhgrp', r.dh); o.set('xauthtype', 'auto'); o.setq('authusrgrp', r.group);
+      o.set('ipv4-start-ip', r.start); o.set('ipv4-end-ip', r.end); o.set('ipv4-netmask', r.mask);
+      if (r.dns1) { o.set('dns-mode', 'manual'); o.set('ipv4-dns-server1', r.dns1); o.set('ipv4-dns-server2', r.dns2); }
+      const sp = r.split || []; if (sp.length) o.setq('ipv4-split-include', sp.length > 1 ? r.name + '_SPLIT' : sp[0]);
+      o.en('save-password', !!r.savePw); o.en('client-auto-negotiate', true); o.en('client-keep-alive', true);
+      o.set('dpd', 'on-idle'); o.setq('psksecret', r.psk); o.setq('comments', r.comment);
+    })));
+    o.cfg('vpn ipsec phase2-interface', () => d.ra.forEach(r => o.edit(r.name, () => { o.setq('phase1name', r.name); o.set('proposal', r.prop); o.en('pfs', true); o.set('dhgrp', r.dh); })));
+    o.blank();
+  }
+
+  /* --- SD-WAN --- */
+  const sw = d.sdwan;
+  if (sw.on) {
+    o.c('SD-WAN');
+    o.cfg('system sdwan', () => {
+      o.en('status', true);
+      const cz = sw.zones.filter(z => z.name && z.name !== 'virtual-wan-link');
+      if (cz.length) o.cfg('zone', () => cz.forEach(z => o.edit(z.name, () => {})));
+      o.cfg('members', () => sw.members.forEach((x, i) => { if (!x.intf) return; o.edit(i + 1, () => {
+        o.setq('interface', x.intf); if (isIP(x.gw)) o.set('gateway', x.gw); if (x.zone) o.setq('zone', x.zone); o.set('cost', x.cost || 0); if (x.en === false) o.set('status', 'disable');
+      }); }));
+      if (sw.hcs.length) o.cfg('health-check', () => sw.hcs.forEach(h => o.edit(h.name, () => {
+        o.set('protocol', h.proto);
+        if (h.proto === 'dns') { o.setq('server', h.server); o.setq('dns-request-domain', h.domain || 'www.example.com'); } else o.setq('server', h.server);
+        if (h.proto === 'http') o.set('port', h.port || 80);
+        o.set('interval', h.interval); o.set('failtime', h.failtime); o.set('recoverytime', h.recovery);
+        o.set('members', h.members && h.members !== 'all' ? h.members : 0);
+        if (h.slaOn) o.cfg('sla', () => o.edit(1, () => { o.set('latency-threshold', h.lat); o.set('jitter-threshold', h.jit); o.set('packetloss-threshold', h.loss); }));
+      })));
+      if (sw.rules.length) o.cfg('service', () => sw.rules.forEach((r, i) => o.edit(i + 1, () => {
+        const sq = (r.members || []);
+        o.setq('name', r.name); o.set('mode', r.mode === 'sla' ? 'sla' : 'manual');
+        o.setl('dst', r.dst && r.dst.length ? r.dst : ['all']); if (r.src && r.src.length) o.setl('src', r.src);
+        if (r.proto && r.proto !== 'any') { o.set('protocol', r.proto === 'tcp' ? 6 : 17); if (r.ports) { const [a, b] = r.ports.split('-'); o.set('start-port', a.trim()); o.set('end-port', (b || a).trim()); } }
+        if (r.mode === 'sla' && r.hc) o.cfg('sla', () => o.edit(r.hc, () => o.set('id', 1)));
+        o.set('priority-members', sq.join(' '));
+      })));
+    });
+    o.blank();
+  }
+
+  /* --- static routes --- */
+  const rts = allRoutes(d);
+  if (rts.length) {
+    o.c('Static routes');
+    const zn = sdwanZones(d);
+    o.cfg('router static', () => rts.forEach((r, i) => o.edit(i + 1, () => {
+      const c = parseCidr(r.dst, true);
+      o.set('dst', c ? c.ip + ' ' + c.mask : r.dst);
+      if (r.blackhole) o.en('blackhole', true);
+      else { if (isIP(r.gw)) o.set('gateway', r.gw); if (zn.includes(r.dev) && v7) o.setq('sdwan-zone', r.dev); else o.setq('device', r.dev); }
+      o.set('distance', r.dist); o.set('priority', r.prio); o.setq('comment', r.comment); if (r.en === false) o.set('status', 'disable');
+    })));
+    o.blank();
+  }
+
+  /* --- dynamic routing --- */
+  if (d.bgp.on) {
+    const b = d.bgp; o.c('BGP');
+    o.cfg('router bgp', () => {
+      o.set('as', b.as); o.set('router-id', b.rid);
+      if (b.neighbors.length) o.cfg('neighbor', () => b.neighbors.forEach(n => o.edit(n.ip, () => {
+        o.set('remote-as', n.ras); o.setq('description', n.desc); o.setq('update-source', n.src); o.setq('password', n.pw);
+        if (n.multihop) { o.en('ebgp-enforce-multihop', true); o.set('ebgp-multihop-ttl', n.ttl || 5); }
+        if (n.softre) o.en('soft-reconfiguration', true);
+      })));
+      if (b.networks.length) o.cfg('network', () => b.networks.forEach((n, i) => o.edit(i + 1, () => o.set('prefix', ipm(n.prefix) || n.prefix))));
+      if (b.redistConn) o.cfg('redistribute "connected"', () => o.en('status', true));
+      if (b.redistStatic) o.cfg('redistribute "static"', () => o.en('status', true));
+    });
+    o.blank();
+  }
+  if (d.ospf.on) {
+    const p = d.ospf; o.c('OSPF');
+    o.cfg('router ospf', () => {
+      o.set('router-id', p.rid); if (p.defOrig) o.set('default-information-originate', 'enable');
+      const areas = uniq(p.networks.map(n => n.area || '0.0.0.0'));
+      if (areas.length) o.cfg('area', () => areas.forEach(a => o.raw('edit ' + a) || o.raw('next')));
+      if (p.networks.length) o.cfg('network', () => p.networks.forEach((n, i) => o.edit(i + 1, () => { o.set('prefix', ipm(n.prefix) || n.prefix); o.set('area', n.area || '0.0.0.0'); })));
+      o.setl('passive-interface', p.passive);
+      if (p.redistConn) o.cfg('redistribute "connected"', () => o.en('status', true));
+      if (p.redistStatic) o.cfg('redistribute "static"', () => o.en('status', true));
+    });
+    o.blank();
+  }
+
+  /* --- policies --- */
+  const pols = allPolicies(d);
+  if (pols.length) {
+    o.c('Firewall policies (evaluated top-down; implicit deny at the end)');
+    let id = +d.polStart || 1;
+    o.cfg('firewall policy', () => pols.forEach(p => o.edit(id++, () => {
+      o.setq('name', p.name); o.setl('srcintf', p.src); o.setl('dstintf', p.dst); o.set('action', p.action);
+      o.setl('srcaddr', p.srcaddr && p.srcaddr.length ? p.srcaddr : ['all']); o.setl('groups', p.groups); o.setl('dstaddr', p.dstaddr && p.dstaddr.length ? p.dstaddr : ['all']);
+      o.setq('schedule', 'always'); o.setl('service', p.svc && p.svc.length ? p.svc : ['ALL']);
+      if (p.action === 'accept') {
+        const prof = Object.keys(FG.PROFILES).filter(k => p[k]);
+        if (prof.length) {
+          o.en('utm-status', true); o.set('inspection-mode', p.mode || 'flow'); o.setq('ssl-ssh-profile', p.ssl || 'certificate-inspection');
+          prof.forEach(k => o.setq(FG.PROFILES[k].key, p[k]));
+        }
+        o.en('nat', !!p.nat); if (p.nat && p.ippool) { o.en('ippool', true); o.setl('poolname', [p.ippool]); }
+      }
+      o.set('logtraffic', p.log || 'all'); o.setq('comments', p.comment); if (p.en === false) o.set('status', 'disable');
+    })));
+    o.blank();
+  }
+
+  /* --- admin --- */
+  const trustLines = (str, pre) => splitList(str).slice(0, 10).forEach((t, i) => { const c = parseCidr(t, true); if (c) o.set(pre + (i + 1), c.ip + ' ' + c.mask); });
+  if (s.adminPw || s.adminTrust || d.admins.length) {
+    o.c('Administrators');
+    o.cfg('system admin', () => {
+      if (s.adminPw || s.adminTrust) o.edit('admin', () => { o.setq('password', s.adminPw); trustLines(s.adminTrust, 'trusthost'); });
+      d.admins.forEach(a => o.edit(a.name, () => { o.setq('password', a.pw); o.setq('accprofile', a.profile || 'super_admin'); trustLines(a.trust, 'trusthost'); o.setq('comments', a.comment); }));
+    });
+    o.blank();
+  }
+
+  /* --- SNMP --- */
+  if (d.snmp.on) {
+    const n = d.snmp; o.c('SNMP');
+    o.cfg('system snmp sysinfo', () => { o.en('status', true); o.setq('description', n.desc); o.setq('contact-info', n.contact); o.setq('location', n.loc); });
+    if (n.comms.length) o.cfg('system snmp community', () => n.comms.forEach((c, i) => o.edit(i + 1, () => {
+      o.setq('name', c.name);
+      const hs = splitList(c.hosts); if (hs.length) o.cfg('hosts', () => hs.forEach((h, k) => o.edit(k + 1, () => o.set('ip', ipm(h) || h))));
+      o.en('status', true);
+    })));
+    if (n.v3.length) o.cfg('system snmp user', () => n.v3.forEach(u => o.edit(u.name, () => {
+      o.set('security-level', u.level);
+      if (u.level !== 'no-auth-no-priv') { o.set('auth-proto', u.auth); o.setq('auth-pwd', u.authPw); }
+      if (u.level === 'auth-priv') { o.set('priv-proto', u.priv); o.setq('priv-pwd', u.privPw); }
+    })));
+    o.blank();
+  }
+
+  /* --- logging / management --- */
+  if (d.syslog.on || d.faz.on || d.fgcloud) {
+    o.c('Logging');
+    if (d.syslog.on) o.cfg('log syslogd setting', () => { o.en('status', true); o.setq('server', d.syslog.server); o.set('port', d.syslog.port); o.set('mode', d.syslog.mode); o.set('facility', d.syslog.facility); o.set('format', d.syslog.format); });
+    if (d.faz.on) o.cfg('log fortianalyzer setting', () => { o.en('status', true); o.setq('server', d.faz.server); o.set('upload-option', d.faz.upload); });
+    if (d.fgcloud) o.cfg('log fortiguard setting', () => { o.en('status', true); o.set('upload-option', 'realtime'); });
+    o.blank();
+  }
+  if (s.fmg) { o.c('Central management'); o.cfg('system central-management', () => { o.set('type', 'fortimanager'); o.setq('fmg', s.fmg); }); o.blank(); }
+
+  /* --- HA --- */
+  if (d.ha.on) {
+    const h = d.ha; o.c('High availability (applying this will start cluster negotiation; cable heartbeat links first)');
+    o.cfg('system ha', () => {
+      o.set('group-id', h.id); o.setq('group-name', h.group); o.set('mode', h.mode); o.setq('password', h.pw);
+      if (h.hb.length) o.set('hbdev', h.hb.map((p, i) => q(p) + ' ' + (50 * (i + 1))).join(' '));
+      o.en('session-pickup', h.pickup); o.set('priority', h.prio); o.en('override', h.override); o.setl('monitor', h.mon);
+    });
+    o.blank();
+  }
+  while (o.L.length && o.L[o.L.length - 1] === '') o.L.pop();
+  return o.text();
+};
+
+/* ============================ validation ============================ */
+FG.validate = function (d) {
+  const R = [], E = m => R.push({ l: 'err', m }), W = m => R.push({ l: 'warn', m }), N = m => R.push({ l: 'info', m });
+  const A = act(d), s = d.sys, m = model(d), names = A.map(i => i.name);
+  const dupe = (arr, what) => { const seen = {}; arr.filter(Boolean).forEach(x => { if (seen[x]) E('Duplicate ' + what + ' name: ' + x); seen[x] = 1; }); };
+
+  if (!/^[A-Za-z0-9_-]{1,35}$/.test(s.hostname || '')) E('Hostname must be 1-35 chars: letters, digits, - or _.');
+  if (!vge(d, '7.2')) W('FortiOS ' + d.version + ' is old; check Fortinet\'s lifecycle page. 6.4 uses numeric timezone IDs (run "set timezone ?").');
+  if (!d.lic.forticare) N('No FortiCare entitlement: no firmware downloads or RMA, and FortiGuard services will not update.');
+  if (m.id === 'CUSTOM') N('Custom model: port names are whatever you typed. Verify against "get hardware nic" on the unit.');
+  else N('Port names for ' + m.id + ' are a starting template. Confirm with "get system interface physical" before deploying.');
+
+  /* interfaces */
+  const nets = [];
+  A.forEach(i => {
+    const lbl = 'Interface ' + i.name + ': ';
+    if (i.type !== 'physical' && i.type !== 'switch' && !/^[A-Za-z0-9_.-]{1,15}$/.test(i.name || '')) E(lbl + 'name must be 1-15 chars (letters, digits, _ . -).');
+    if (i.mode === 'static') {
+      const c = parseCidr(i.ip); if (!c) { if (i.type !== 'aggregate') E(lbl + 'static mode needs a valid IP (e.g. 10.0.0.1/24).'); }
+      else { nets.push({ n: i.name, c }); if (c.pfx === 32 && i.type !== 'loopback') W(lbl + '/32 on a non-loopback interface.'); }
+    }
+    if (i.type === 'vlan') {
+      if (!(+i.vid >= 1 && +i.vid <= 4094)) E(lbl + 'VLAN ID must be 1-4094.');
+      if (!names.includes(i.parent)) E(lbl + 'parent interface "' + i.parent + '" not found.');
+      if (A.some(o => o !== i && o.type === 'vlan' && o.parent === i.parent && +o.vid === +i.vid)) E(lbl + 'duplicate VLAN ID ' + i.vid + ' on ' + i.parent + '.');
+    }
+    if (i.type === 'aggregate' && (i.members || []).length < 2) W(lbl + 'LAG with fewer than 2 members.');
+    if (i.role === 'wan' && i.mode === 'static' || i.role === 'wan' && i.mode !== 'unused') {
+      const bad = i.allow.filter(a => ['http', 'telnet', 'snmp'].includes(a)); if (bad.length) E(lbl + 'WAN-role interface allows ' + bad.join(', ') + ' (cleartext/mgmt exposure).');
+      const mg = i.allow.filter(a => ['https', 'ssh'].includes(a)); if (mg.length) W(lbl + 'WAN-role interface allows ' + mg.join(', ') + '. Make sure admin trusted hosts are set.');
+    }
+    const h = i.dhcp;
+    if (h && h.on) {
+      const c = parseCidr(i.ip);
+      if (i.mode !== 'static' || !c) E(lbl + 'DHCP server needs a static IP on the interface.');
+      else if (!isIP(h.start) || !isIP(h.end)) E(lbl + 'DHCP range start/end must be IPs.');
+      else {
+        if (!inNet(h.start, c) || !inNet(h.end, c)) E(lbl + 'DHCP range is outside ' + i.ip + '.');
+        if (ip2n(h.start) > ip2n(h.end)) E(lbl + 'DHCP range start is after end.');
+        if (ip2n(c.ip) >= ip2n(h.start) && ip2n(c.ip) <= ip2n(h.end)) W(lbl + 'DHCP range includes the interface address.');
+      }
+      if (h.dnsMode === 'specify' && !isIP(h.dns1)) E(lbl + 'DHCP DNS server 1 invalid.');
+      h.res.forEach(r => { if (!/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i.test(r.mac || '')) E(lbl + 'reservation MAC "' + r.mac + '" invalid (aa:bb:cc:dd:ee:ff).'); if (!isIP(r.ip)) E(lbl + 'reservation IP "' + r.ip + '" invalid.'); });
+    }
+  });
+  nets.forEach((a, x) => nets.forEach((b, y) => { if (y > x) {
+    if (a.c.ip === b.c.ip) E('Duplicate IP ' + a.c.ip + ' on ' + a.n + ' and ' + b.n + '.');
+    else { const mp = Math.min(a.c.pfx, b.c.pfx); const mk = ip2n(pfx2mask(mp)); if (mp && ((ip2n(a.c.ip) & mk) >>> 0) === ((ip2n(b.c.ip) & mk) >>> 0)) W('Subnets overlap: ' + a.n + ' (' + a.c.ip + '/' + a.c.pfx + ') and ' + b.n + ' (' + b.c.ip + '/' + b.c.pfx + ').'); }
+  } }));
+  dupe(A.map(i => i.name).concat(d.zones.map(z => z.name), d.vpns.map(v => v.name), d.ra.map(v => v.name)), 'interface/zone/tunnel');
+
+  /* zones */
+  const seenZ = {};
+  d.zones.forEach(z => { (z.members || []).forEach(x => { if (!names.includes(x)) E('Zone ' + z.name + ': member "' + x + '" does not exist.'); if (seenZ[x]) E('Interface ' + x + ' is in zones ' + seenZ[x] + ' and ' + z.name + '.'); seenZ[x] = z.name; }); if (!z.name) E('A zone has no name.'); });
+
+  /* routes */
+  const rts = allRoutes(d), swm = sdwanMembers(d);
+  d.routes.forEach((r, i) => {
+    const lbl = 'Static route #' + (i + 1) + ': ';
+    if (!parseCidr(r.dst, true)) E(lbl + 'destination "' + r.dst + '" invalid.');
+    if (!r.blackhole) {
+      if (r.gw && !isIP(r.gw)) E(lbl + 'gateway invalid.');
+      if (!r.dev) E(lbl + 'pick an outgoing interface.');
+      else if (!intfChoices(d).includes(r.dev) || swm.includes(r.dev)) E(lbl + (swm.includes(r.dev) ? 'interface ' + r.dev + ' is an SD-WAN member; route via the SD-WAN zone instead.' : 'interface "' + r.dev + '" not found.'));
+    }
+  });
+  const hasDefault = rts.some(r => /^0\.0\.0\.0(\/0| 0\.0\.0\.0)$/.test((r.dst || '').trim()) && !r.blackhole) || A.some(i => ['dhcp', 'pppoe'].includes(i.mode) && i.defgw);
+  if (!hasDefault) W('No default route (no static 0.0.0.0/0, no DHCP/PPPoE WAN with default gateway, no SD-WAN default).');
+
+  /* SD-WAN */
+  const sw = d.sdwan;
+  if (sw.on) {
+    if (sw.members.filter(x => x.intf).length < 2) N('SD-WAN has fewer than 2 members; failover needs at least two.');
+    sw.members.forEach((x, i) => {
+      if (!x.intf || !(names.includes(x.intf) || d.vpns.some(v => v.name === x.intf))) E('SD-WAN member #' + (i + 1) + ': interface "' + x.intf + '" not found.');
+      if (x.gw && !isIP(x.gw)) E('SD-WAN member #' + (i + 1) + ': gateway invalid.');
+      const ifc = A.find(a => a.name === x.intf); if (ifc && ifc.mode === 'static' && !isIP(x.gw)) W('SD-WAN member ' + x.intf + ' is static-IP with no gateway set.');
+      if (x.zone && !sdwanZones(d).includes(x.zone)) E('SD-WAN member #' + (i + 1) + ': zone "' + x.zone + '" not defined.');
+    });
+    sw.hcs.forEach(h => { if (!h.name) E('SD-WAN health check without a name.'); if (!h.server) E('SD-WAN health check ' + h.name + ' has no server.'); else if (h.proto === 'ping' && !isIP(h.server)) W('Health check ' + h.name + ': ping server is not an IP (FQDN works but adds DNS dependency).'); });
+    sw.rules.forEach(r => { if (!r.name) E('SD-WAN rule without a name.'); if (!(r.members || []).length) E('SD-WAN rule ' + r.name + ': pick at least one member.'); if (r.mode === 'sla' && !sw.hcs.some(h => h.name === r.hc && h.slaOn)) E('SD-WAN rule ' + r.name + ': SLA mode needs a health check with SLA enabled.'); });
+  }
+
+  /* objects */
+  const addrNames = d.addrs.concat(d.addrgrps, d.vips).map(a => a.name);
+  dupe(addrNames, 'address/group/VIP');
+  d.addrs.forEach(a => {
+    const l = 'Address ' + a.name + ': ';
+    if (!a.name) return E('An address has no name.');
+    if (a.name.length > 79) E(l + 'name too long (79 max).');
+    if (a.type === 'subnet' && !parseCidr(a.val, true)) E(l + 'invalid subnet.');
+    if (a.type === 'iprange') { const p = (a.val || '').split('-').map(t => t.trim()); if (p.length !== 2 || !isIP(p[0]) || !isIP(p[1])) E(l + 'range must be a.b.c.d-w.x.y.z.'); }
+    if (a.type === 'fqdn' && !/^[A-Za-z0-9*._-]+\.[A-Za-z]{2,}$/.test(a.val || '')) E(l + 'invalid FQDN.');
+    if (a.type === 'geography' && !/^[A-Za-z]{2}$/.test(a.val || '')) E(l + 'use a 2-letter country code.');
+  });
+  const ac = addrChoices(d);
+  d.addrgrps.forEach(g => (g.members || []).forEach(x => { if (!ac.includes(x) || x === g.name) E('Address group ' + g.name + ': member "' + x + '" invalid.'); }));
+  d.svcgrps.forEach(g => (g.members || []).forEach(x => { if (!svcChoices(d).includes(x)) E('Service group ' + g.name + ': member "' + x + '" not found.'); }));
+  dupe(d.svcs.map(x => x.name).concat(d.svcgrps.map(x => x.name)), 'service');
+  d.svcs.forEach(x => { if (!x.tcp && !x.udp) W('Service ' + x.name + ' has no TCP or UDP ports.'); });
+  d.vips.forEach(v => {
+    if (!isIP(v.extip)) E('VIP ' + v.name + ': external IP invalid.'); if (!isIP(v.mappedip)) E('VIP ' + v.name + ': mapped IP invalid.');
+    if (v.pf && (!v.extport || !v.proto)) E('VIP ' + v.name + ': port forwarding needs protocol and external port.');
+    if (v.extintf && v.extintf !== 'any' && !names.includes(v.extintf)) E('VIP ' + v.name + ': interface not found.');
+  });
+  d.pools.forEach(p => { if (!isIP(p.start) || (p.end && !isIP(p.end))) E('IP pool ' + p.name + ': invalid addresses.'); });
+
+  /* policies */
+  const ic = intfChoices(d), sc = svcChoices(d), zm = zoneMembers(d);
+  allPolicies(d).forEach((p, i) => {
+    const l = 'Policy ' + (p.name || '#' + (i + 1)) + ': ';
+    if (!p.name) W('Policy #' + (i + 1) + ' has no name.'); else if (p.name.length > 35) E(l + 'name over 35 chars.');
+    ['src', 'dst'].forEach(k => {
+      if (!(p[k] || []).length) E(l + (k === 'src' ? 'incoming' : 'outgoing') + ' interface is empty.');
+      (p[k] || []).forEach(x => {
+        if (zm.includes(x)) E(l + 'interface ' + x + ' is a zone member; reference the zone instead.');
+        else if (swm.includes(x)) E(l + 'interface ' + x + ' is an SD-WAN member; reference the SD-WAN zone instead.');
+        else if (!ic.includes(x)) E(l + 'interface/zone "' + x + '" not found.');
+      });
+    });
+    (p.srcaddr || []).concat(p.dstaddr || []).forEach(x => { if (!ac.includes(x)) E(l + 'address "' + x + '" not found.'); });
+    (p.groups || []).forEach(x => { if (!d.ugroups.some(g => g.name === x)) E(l + 'user group "' + x + '" not found.'); });
+    (p.svc || []).forEach(x => { if (!sc.includes(x)) E(l + 'service "' + x + '" not found.'); });
+    Object.keys(FG.PROFILES).forEach(k => { if (p[k] && !d.lic[FG.PROFILES[k].lic]) E(l + FG.PROFILES[k].n + ' profile needs the "' + FG.LICS.find(x => x.id === FG.PROFILES[k].lic).n + '" license.'); });
+    if (p.ssl === 'deep-inspection' && Object.keys(FG.PROFILES).some(k => p[k])) N(l + 'deep inspection needs the FortiGate CA cert deployed to clients.');
+    if (p.action === 'accept' && !Object.keys(FG.PROFILES).some(k => p[k]) && (p.srcaddr || []).includes('all') && (p.dstaddr || []).includes('all') && (p.svc || []).includes('ALL') && (p.src || []).concat(p.dst || []).includes('any')) W(l + 'any/any/ALL accept with no security profiles.');
+    if (p.nat && p.ippool && !d.pools.some(x => x.name === p.ippool)) E(l + 'IP pool "' + p.ippool + '" not found.');
+  });
+  dupe(allPolicies(d).map(p => p.name), 'policy');
+
+  /* VPN */
+  d.vpns.forEach(v => {
+    const l = 'IPsec ' + v.name + ': ';
+    if (!/^[A-Za-z0-9_.-]{1,15}$/.test(v.name || '')) E(l + 'tunnel name must be 1-15 chars.');
+    if (v.type !== 'dynamic' && !v.gw) E(l + 'remote gateway required.');
+    if (v.type === 'static' && v.gw && !isIP(v.gw)) E(l + 'remote gateway must be an IP.');
+    if (!names.includes(v.intf)) E(l + 'outgoing interface not found.');
+    if (!v.psk) E(l + 'pre-shared key empty.'); else if (v.psk.length < 12) W(l + 'PSK shorter than 12 chars.');
+    if (!splitList(v.localSubs).length || !splitList(v.remoteSubs).length) E(l + 'local and remote subnets required.');
+    splitList(v.localSubs).concat(splitList(v.remoteSubs)).forEach(x => { if (!parseCidr(x, true)) E(l + 'bad subnet "' + x + '".'); });
+    if (v.ike === 1 && v.type === 'dynamic') W(l + 'IKEv1 dial-up usually needs aggressive mode + peer ID; this tool does not generate that.');
+    if (v.addPolicies && v.polIntf !== 'any' && !ic.includes(v.polIntf)) E(l + 'policy interface "' + v.polIntf + '" not found.');
+  });
+
+  /* users / FortiClient */
+  const authNames = d.users.map(u => u.name).concat(d.radius.map(r => r.name));
+  dupe(d.users.map(u => u.name).concat(d.radius.map(r => r.name), d.ugroups.map(g => g.name)), 'user/server/group');
+  d.users.forEach(u => { if (!u.name) E('A local user has no name.'); if (!u.pw) E('User ' + u.name + ' has no password.'); else if (u.pw.length < 8) W('User ' + u.name + ': password under 8 chars.'); });
+  d.radius.forEach(r => { if (!r.server) E('RADIUS ' + r.name + ': server missing.'); if (!r.secret) E('RADIUS ' + r.name + ': secret missing.'); });
+  d.ugroups.forEach(g => (g.members || []).forEach(x => { if (!authNames.includes(x)) E('Group ' + g.name + ': member "' + x + '" not found.'); }));
+  d.ra.forEach(r => {
+    const l = 'FortiClient ' + r.name + ': ';
+    if (!/^[A-Za-z0-9_.-]{1,15}$/.test(r.name || '')) E(l + 'tunnel name must be 1-15 chars.');
+    if (!names.includes(r.intf)) E(l + 'outgoing interface not found.');
+    if (!r.psk) E(l + 'pre-shared key empty.'); else if (r.psk.length < 16) W(l + 'PSK under 16 chars; aggressive-mode PSK is exposed to offline cracking, so use a long random one.');
+    if (!d.ugroups.some(g => g.name === r.group)) E(l + 'pick a user group for XAuth.'); else if (!d.ugroups.find(g => g.name === r.group).members.length) E(l + 'user group is empty.');
+    if (!isIP(r.start) || !isIP(r.end) || mask2pfx(r.mask) === null) E(l + 'client pool start/end/netmask invalid.');
+    else { if (ip2n(r.start) > ip2n(r.end)) E(l + 'pool start is after end.'); const c = { ip: r.start, mask: r.mask }; if (!inNet(r.end, c)) E(l + 'pool start/end are not in the same subnet for the mask.');
+      if (nets.some(n => inNet(r.start, n.c))) W(l + 'client pool overlaps a local interface subnet.'); }
+    if (r.dns1 && !isIP(r.dns1)) E(l + 'DNS 1 invalid.');
+    (r.split || []).concat(r.dest || []).forEach(x => { if (!ac.includes(x)) E(l + 'address "' + x + '" not found.'); });
+    if (!(r.split || []).length) W(l + 'no split-tunnel networks: clients will send ALL traffic through the tunnel (needs a policy and NAT to the internet).');
+    if (r.lanIntf && r.lanIntf !== 'any' && !ic.includes(r.lanIntf)) E(l + 'policy interface not found.');
+  });
+  if (d.ra.length) N('FortiClient dial-up here is IKEv1 aggressive + XAuth with a shared PSK. For MFA, use a RADIUS server that does it (or move to certificate/EAP, which is not generated).');
+
+  /* BGP/OSPF */
+  if (d.bgp.on) { if (!+d.bgp.as) E('BGP: AS number required.'); d.bgp.neighbors.forEach(n => { if (!isIP(n.ip)) E('BGP neighbor "' + n.ip + '" invalid.'); if (!+n.ras) E('BGP neighbor ' + n.ip + ': remote AS required.'); }); }
+  if (d.ospf.on) d.ospf.networks.forEach(n => { if (!parseCidr(n.prefix)) E('OSPF network "' + n.prefix + '" invalid.'); if (n.area && !/^\d+\.\d+\.\d+\.\d+$/.test(n.area)) E('OSPF area must be dotted (0.0.0.0).'); });
+
+  /* system */
+  if (!s.adminPw) N('Admin password not set in this script. A factory unit forces a change at first login.');
+  if (!splitList(s.adminTrust).length) W('No trusted hosts on the admin account.');
+  splitList(s.adminTrust).forEach(t => { if (!parseCidr(t, true)) E('Admin trusted host "' + t + '" invalid.'); });
+  if (s.httpsPort == 443 && s.sshPort == 22) { /* defaults */ }
+  if (s.fmg && !isIP(s.fmg)) W('FortiManager value is not an IP (FQDN is fine if DNS resolves it).');
+  if (s.fmg && !A.some(i => i.allow.includes('fgfm'))) N('FortiManager set but no interface allows fgfm.');
+  d.admins.forEach(a => { if (!a.name) E('An admin has no name.'); if (!a.pw) W('Admin ' + a.name + ' has no password in script.'); });
+  d.snmp.comms.forEach(c => { if (/^(public|private)$/i.test(c.name)) W('SNMP community "' + c.name + '" is a well-known default.'); });
+  if (d.syslog.on && !s.dns1 && !isIP(d.syslog.server)) W('Syslog by name needs DNS.');
+  if (d.faz.on && !d.faz.server) E('FortiAnalyzer server missing.'); if (d.syslog.on && !d.syslog.server) E('Syslog server missing.');
+  if (d.fgcloud && !d.lic.fgc) W('FortiGate Cloud logging is enabled but the license box is not ticked.');
+  if (d.ha.on) {
+    if (!d.ha.pw) E('HA: password required.'); if (!d.ha.hb.length) E('HA: choose at least one heartbeat interface.');
+    d.ha.hb.forEach(x => { if (!names.includes(x)) E('HA: heartbeat interface ' + x + ' not found.'); if (rts.some(r => r.dev === x)) W('HA heartbeat ' + x + ' is also used by a route.'); });
+    N('HA: apply to the intended primary first; use a different hostname and a lower priority on the secondary.');
+  }
+  if (lanMembers(d).length && d.dissolveLan) N('Factory LAN switch removal assumes default DHCP server id 1 and policy id 1. Errors from those delete lines are harmless if the objects are absent.');
+  return R;
+};
+
+/* ============================ templates ============================ */
+FG.applyTemplate = function (d, kind) {
+  const A = act(d).filter(i => i.type === 'physical' || i.type === 'switch');
+  const nm = A.map(i => i.name);
+  const wans = nm.filter(n => /^wan/.test(n)); const w1 = wans[0] || nm[0], w2 = wans[1];
+  const lanN = (nm.includes('lan') && 'lan') || nm.find(n => /^(internal1|lan1|port2)$/.test(n)) || nm.find(n => n !== w1 && n !== w2 && !/^(dmz|ha|mgmt|a|b|fortilink)/.test(n));
+  const get = n => d.ifaces.find(i => i.name === n);
+  d.vlans = undefined; d.policies = []; d.routes = []; d.sdwan = { on: false, defRoute: true, zones: [], members: [], hcs: [], rules: [] };
+  d.ifaces.forEach(i => { if (i.type === 'physical' || i.type === 'switch') { i.mode = 'unused'; i.role = i.type === 'switch' ? 'lan' : 'undefined'; i.alias = ''; i.allow = []; i.ip = ''; i.dhcp.on = false; } });
+  const W1 = get(w1), L = get(lanN);
+  if (W1) Object.assign(W1, { mode: 'dhcp', role: 'wan', alias: 'WAN1', allow: ['ping'], defgw: true });
+  if (L) Object.assign(L, { mode: 'static', role: 'lan', alias: 'LAN', ip: '192.168.1.1/24', allow: ['ping', 'https', 'ssh'] }), Object.assign(L.dhcp, { on: true, start: '192.168.1.100', end: '192.168.1.200', gw: '', dnsMode: 'default' });
+  const pol = { name: 'LAN-to-WAN', en: true, src: [lanN], dst: [w1], srcaddr: ['all'], dstaddr: ['all'], svc: ['ALL'], action: 'accept', nat: true, ippool: '', log: 'all', ssl: '', mode: 'flow', comment: '' };
+  if (kind === 'dual' && w2) {
+    const W2 = get(w2); Object.assign(W2, { mode: 'dhcp', role: 'wan', alias: 'WAN2', allow: ['ping'], defgw: true, dist: 20 });
+    d.sdwan = { on: true, defRoute: true, zones: [], members: [{ intf: w1, gw: '', zone: 'virtual-wan-link', cost: 0, en: true }, { intf: w2, gw: '', zone: 'virtual-wan-link', cost: 0, en: true }],
+      hcs: [{ name: 'Internet', proto: 'ping', server: '1.1.1.1', port: '', domain: '', interval: 500, failtime: 5, recovery: 5, members: 'all', slaOn: true, lat: 150, jit: 50, loss: 5 }], rules: [] };
+    W1.defgw = false; W2.defgw = false;
+    pol.dst = ['virtual-wan-link'];
+  }
+  Object.keys(FG.PROFILES).forEach(k => { if (d.lic[FG.PROFILES[k].lic]) pol[k] = FG.PROFILES[k].opts[0]; });
+  d.policies.push(pol);
+  d.ifaces = d.ifaces.filter(i => ['physical', 'switch'].includes(i.type));
+  syncPorts(d);
+};
+
+root.FG = FG; if (typeof module !== 'undefined') module.exports = FG;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>'use strict';
+(function () {
+const { q, isIP, parseCidr, splitList, uniq } = FG.util;
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let S = { name: 'Firewall project', devices: [], cur: 0 };
+const UI = { tab: 'device', sel: {}, outTab: 'cli', comments: true, dl: null };
+const D = () => S.devices[S.cur];
+const getp = (o, p) => p.split('.').reduce((a, k) => a == null ? a : a[k], o);
+const setp = (o, p, v) => { const k = p.split('.'), l = k.pop(); k.reduce((a, x) => a[x], o)[l] = v; };
+
+/* ======================= persistence ======================= */
+function save() { try { localStorage.setItem('fgbuilder.v1', JSON.stringify(S)); } catch (e) {} }
+function load() { try { const t = localStorage.getItem('fgbuilder.v1'); if (t) { const x = JSON.parse(t); if (x && x.devices && x.devices.length) { x.devices.forEach(FG.migrate); S = x; return true; } } } catch (e) {} return false; }
+
+/* ======================= field builders ======================= */
+function F(path, f) {
+  const d = D(), v = getp(d, path), id = 'f_' + path.replace(/\./g, '_'), rr = f.rr ? ' data-rr="1"' : '';
+  const a = `data-p="${esc(path)}"${rr}`;
+  const opts = typeof f.opts === 'function' ? f.opts(d) : (f.opts || []);
+  const oh = (cur) => opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(ov)}"${String(ov) === String(cur) ? ' selected' : ''}>${esc(ol)}</option>`; }).join('');
+  let inner = '';
+  switch (f.t) {
+    case 'sel': inner = `<select ${a}>${oh(v)}</select>`; break;
+    case 'chk': inner = `<label class="chk"><input type="checkbox" ${a}${v ? ' checked' : ''}> <span>${esc(f.cl || '')}</span></label>`; break;
+    case 'num': inner = `<input type="number" ${a} value="${esc(v)}" placeholder="${esc(f.ph || '')}">`; break;
+    case 'pw': inner = `<input type="text" class="mono" ${a} value="${esc(v)}" placeholder="${esc(f.ph || '')}" autocomplete="off">`; break;
+    case 'area': inner = `<textarea ${a} rows="${f.rows || 3}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>`; break;
+    case 'chks': inner = `<div class="chks">${opts.map(o => `<label class="chk"><input type="checkbox" data-p="${esc(path)}" data-set="${esc(o)}"${(v || []).includes(o) ? ' checked' : ''}> ${esc(o)}</label>`).join('')}</div>`; break;
+    case 'multi': inner = multi(path, opts, v); break;
+    case 'combo': { const lid = 'dl_' + id; inner = `<input list="${lid}" ${a} value="${esc(v)}" placeholder="${esc(f.ph || '')}"><datalist id="${lid}">${opts.map(o => `<option value="${esc(o)}">`).join('')}</datalist>`; break; }
+    default: inner = `<input type="text" ${a} value="${esc(v)}" placeholder="${esc(f.ph || '')}">`;
+  }
+  if (f.bare) return inner;
+  return `<div class="fld${f.w ? ' ' + f.w : ''}"><label>${esc(f.l || '')}</label>${inner}${f.h ? `<div class="hint">${f.h}</div>` : ''}</div>`;
+}
+function multi(path, opts, v) {
+  v = v || []; const label = v.length ? v.map((x, i) => (opts.length && v.length > 1 && /prio|order/.test('') ? '' : '') + x).join(', ') : 'none';
+  return `<details class="ms"><summary title="${esc(label)}">${esc(label)}</summary><div class="pop">${opts.length ? opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<label class="chk"><input type="checkbox" data-p="${esc(path)}" data-set="${esc(ov)}" data-ms="1"${v.includes(String(ov)) || v.includes(ov) ? ' checked' : ''}> ${esc(ol)}</label>`; }).join('') : '<div class="hint">Nothing available yet.</div>'}</div></details>`;
+}
+const row = (...c) => `<div class="frow">${c.join('')}</div>`;
+const card = (t, body, extra) => `<section class="card"><h3>${t}${extra ? `<span class="cx">${extra}</span>` : ''}</h3>${body}</section>`;
+const btn = (act, label, attrs, cls) => `<button class="btn ${cls || ''}" data-act="${act}" ${attrs || ''}>${label}</button>`;
+
+/* ---------- generic list editor ---------- */
+function LE(path, cols, o) {
+  const d = D(), arr = getp(d, path) || []; o = o || {};
+  const head = cols.map(c => `<th${c.w ? ` style="width:${c.w}"` : ''}>${esc(c.l)}</th>`).join('') + '<th class="ra"></th>';
+  const body = arr.map((it, i) => '<tr>' + cols.map(c => {
+    const f = Object.assign({}, c, { bare: true }); if (typeof c.ph === 'function') f.ph = c.ph(it); if (c.show && !c.show(it)) return '<td></td>';
+    return `<td>${F(path + '.' + i + '.' + c.k, f)}</td>`;
+  }).join('') + `<td class="ra nw">${o.move === false ? '' : btn('mv', '↑', `data-path="${path}" data-i="${i}" data-dir="-1"`, 'ico') + btn('mv', '↓', `data-path="${path}" data-i="${i}" data-dir="1"`, 'ico')}${btn('del', '✕', `data-path="${path}" data-i="${i}"`, 'ico danger')}</td></tr>`).join('');
+  return `<div class="tw"><table class="grid"><thead><tr>${head}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length + 1}" class="empty">${esc(o.empty || 'Nothing configured.')}</td></tr>`}</tbody></table></div>` + btn('add', '+ ' + (o.add || 'Add'), `data-path="${path}" data-new="${o.n}"`, 'primary');
+}
+const NEW = {
+  route: () => ({ en: true, dst: '', gw: '', dev: '', dist: 10, prio: 1, blackhole: false, comment: '' }),
+  zone: () => ({ name: 'ZONE1', intrazone: 'allow', members: [], comment: '' }),
+  addr: () => ({ name: '', type: 'subnet', val: '', comment: '' }),
+  addrgrp: () => ({ name: '', members: [], comment: '' }),
+  svc: () => ({ name: '', tcp: '', udp: '', comment: '' }),
+  svcgrp: () => ({ name: '', members: [], comment: '' }),
+  vip: () => ({ name: '', extip: '', extintf: 'any', mappedip: '', pf: true, proto: 'tcp', extport: '', mappedport: '', comment: '' }),
+  pool: () => ({ name: '', type: 'overload', start: '', end: '', comment: '' }),
+  sdzone: () => ({ name: 'WAN' }),
+  sdmember: () => ({ intf: '', gw: '', zone: 'virtual-wan-link', cost: 0, en: true }),
+  sdhc: () => ({ name: 'HC1', proto: 'ping', server: '', port: '', domain: '', interval: 500, failtime: 5, recovery: 5, members: 'all', slaOn: true, lat: 150, jit: 50, loss: 5 }),
+  sdrule: () => ({ name: '', mode: 'manual', dst: ['all'], src: [], proto: 'any', ports: '', members: [], hc: '' }),
+  bgpn: () => ({ ip: '', ras: '', desc: '', src: '', pw: '', multihop: false, ttl: '', softre: true }),
+  net: () => ({ prefix: '', area: '0.0.0.0' }),
+  admin: () => ({ name: '', pw: '', profile: 'super_admin', trust: '', comment: '' }),
+  comm: () => ({ name: '', hosts: '' }),
+  v3: () => ({ name: '', level: 'auth-priv', auth: 'sha256', authPw: '', priv: 'aes', privPw: '' }),
+  res: () => ({ mac: '', ip: '', desc: '' }),
+  policy: () => {
+    const d = D(), ic = FG.intfChoices(d), p = { name: '', en: true, src: [], dst: [], srcaddr: ['all'], dstaddr: ['all'], svc: ['ALL'], action: 'accept', nat: false, ippool: '', log: 'all', ssl: '', mode: 'flow', comment: '' };
+    return p;
+  },
+  user: () => ({ name: '', pw: '', email: '' }),
+  radius: () => ({ name: 'RADIUS1', server: '', secret: '' }),
+  ugroup: () => ({ name: 'VPN-Users', members: [] }),
+  ra: () => ({ name: 'FCT-VPN', intf: '', psk: genPsk() + genPsk().slice(0, 8), prop: 'aes256-sha256 aes128-sha256', dh: '14', group: '', start: '10.212.134.100', end: '10.212.134.200', mask: '255.255.255.0', dns1: '', dns2: '', split: [], dest: [], lanIntf: 'any', savePw: false, log: 'all', comment: '' }),
+  vpn: () => ({ name: 'VPN1', type: 'static', gw: '', intf: '', ike: 2, psk: genPsk(), p1prop: 'aes256-sha256', dh: '14', keylife: 86400, dpd: 'on-idle', nat: true, p2prop: 'aes256-sha256', pfs: true, p2dh: '14', p2life: 43200, localSubs: '', remoteSubs: '', tunLocal: '', tunRemote: '', addRoute: true, blackhole: true, routeDist: 10, addPolicies: true, polIntf: 'any', log: 'all', comment: '' })
+};
+function genPsk() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'; let s = ''; const r = new Uint32Array(24); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(r) : r.forEach((_, i) => r[i] = Math.random() * 4e9); r.forEach(x => s += c[x % c.length]); return s; }
+
+/* ======================= tabs ======================= */
+const intfOpts = d => FG.act(d).map(i => i.name);
+const intfOptsAny = d => [''].concat(intfOpts(d));
+const T = {};
+const NAV = [
+  ['Setup', [['device', 'Device & licenses']]],
+  ['Network', [['interfaces', 'Interfaces'], ['zones', 'Zones'], ['routes', 'Static routes'], ['sdwan', 'SD-WAN'], ['dynrt', 'BGP / OSPF']]],
+  ['Policy & Objects', [['policies', 'Firewall policy'], ['addrs', 'Addresses'], ['svcs', 'Services'], ['vips', 'Virtual IPs'], ['pools', 'IP pools']]],
+  ['VPN', [['ipsec', 'IPsec site-to-site'], ['remote', 'FortiClient remote access']]],
+  ['System', [['system', 'Settings, DNS, NTP'], ['admins', 'Administrators'], ['snmp', 'SNMP'], ['logging', 'Logging & mgmt'], ['ha', 'High availability']]]
+];
+
+T.device = d => {
+  const m = FG.model(d), hasLan = FG.lanMembers(d).length;
+  return card('Hardware & software',
+    row(F('model', { t: 'sel', l: 'Model', opts: FG.MODELS.map(x => [x.id, x.name]), rr: 1 }), F('version', { t: 'sel', l: 'FortiOS train', opts: FG.VERSIONS, rr: 1 }), F('patch', { l: 'Patch (e.g. 8)', ph: 'optional' }), F('sys.hostname', { l: 'Hostname' })) +
+    row(F('portsText', { t: 'area', l: 'Physical ports on this unit (space-separated, editable)', rows: 3, rr: 1, h: 'Seeded from the model template, which may not match your hardware revision. Verify with <code>get hardware nic</code> or <code>get system interface physical</code>.', w: 'grow' })) +
+    (hasLan ? row(F('dissolveLan', { t: 'chk', cl: 'Unit is at factory defaults: remove the default <b>lan</b> hardware switch, its DHCP server and policy 1 (frees internal ports for individual use)', rr: 1 })) : '') +
+    row(F('polStart', { t: 'num', l: 'First firewall policy ID', h: 'Use 1 on a clean unit. If the unit already has policies, pick a number above them.' }))
+  ) + card('Licenses / FortiGuard subscriptions',
+    `<div class="bundles">${['none', 'hw', 'atp', 'utp', 'ent'].map(b => btn('bundle', { none: 'No services', hw: 'Hardware only', atp: 'ATP', utp: 'UTP', ent: 'Enterprise' }[b], `data-b="${b}"`)).join('')}<span class="hint">Bundle contents vary by SKU and date; adjust the boxes to match the actual contract.</span></div>` +
+    `<div class="lics">${FG.LICS.map(l => `<label class="chk"><input type="checkbox" data-p="lic.${l.id}" data-rr="1"${d.lic[l.id] ? ' checked' : ''}> ${esc(l.n)}</label>`).join('')}</div>` +
+    `<div class="hint">Licenses gate which security profiles can be attached to policies, and flag log destinations that need a subscription.</div>`
+  ) + card('Quick start', `<p class="hint">Replaces the interfaces, policies, routes and SD-WAN on this device with a starting point. Other tabs stay as they are.</p><div class="bundles">${btn('tmpl', 'Single WAN + LAN', 'data-k="basic"')}${btn('tmpl', 'Dual WAN (SD-WAN) + LAN', 'data-k="dual"')}</div>`);
+};
+
+/* ---------- interfaces ---------- */
+T.interfaces = d => {
+  const A = FG.act(d); const sel = UI.sel.ifaces && A.find(i => i.name === UI.sel.ifaces) ? UI.sel.ifaces : (A[0] || {}).name; UI.sel.ifaces = sel;
+  const ix = d.ifaces.findIndex(i => i.name === sel), i = d.ifaces[ix];
+  const rows = A.map(x => {
+    const st = x.mode === 'unused' ? '<span class="pill gray">unused</span>' : x.down ? '<span class="pill red">down</span>' : '<span class="pill green">' + esc(x.mode) + '</span>';
+    return `<tr class="sel${x.name === sel ? ' on' : ''}" data-act="pick" data-key="ifaces" data-val="${esc(x.name)}"><td><b>${esc(x.name)}</b></td><td>${x.type}${x.type === 'vlan' ? ' ' + esc(x.vid) + '@' + esc(x.parent) : ''}</td><td>${esc(x.alias)}</td><td>${x.role === 'undefined' ? '' : esc(x.role)}</td><td>${st}</td><td class="mono">${esc(x.mode === 'static' ? x.ip : '')}</td><td>${x.dhcp.on ? '<span class="pill blue">DHCP srv</span>' : ''}</td><td class="nw">${esc(x.allow.join(' '))}</td></tr>`;
+  }).join('');
+  let detail = '';
+  if (i) {
+    const P = 'ifaces.' + ix + '.';
+    detail = card('Edit ' + esc(i.name),
+      row(i.type !== 'physical' && i.type !== 'switch' ? F(P + 'name', { l: 'Name (max 15)', rr: 1 }) : '', F(P + 'alias', { l: 'Alias' }), F(P + 'role', { t: 'sel', l: 'Role', opts: ['undefined', 'lan', 'wan', 'dmz'] }), F(P + 'mode', { t: 'sel', l: 'Addressing', opts: [['unused', 'Unused (leave as is)'], ['static', 'Manual'], ['dhcp', 'DHCP client'], ['pppoe', 'PPPoE']], rr: 1 })) +
+      (i.type === 'vlan' ? row(F(P + 'parent', { t: 'sel', l: 'Parent interface', opts: intfOpts(d).filter(n => n !== i.name) }), F(P + 'vid', { t: 'num', l: 'VLAN ID' })) : '') +
+      (i.type === 'aggregate' ? row(F(P + 'members', { t: 'multi', l: 'Member ports', opts: intfOpts(d).filter(n => n !== i.name && (d.ifaces.find(x => x.name === n) || {}).type === 'physical') }), F(P + 'lacp', { t: 'sel', l: 'LACP mode', opts: ['active', 'passive', 'static'] })) : '') +
+      (i.mode === 'static' ? row(F(P + 'ip', { l: 'IP / mask', ph: '192.168.1.1/24', w: 'grow' })) : '') +
+      (i.mode === 'dhcp' || i.mode === 'pppoe' ? row(F(P + 'defgw', { t: 'chk', cl: 'Retrieve default gateway from server' }), i.mode === 'dhcp' ? F(P + 'dist', { t: 'num', l: 'Distance', ph: '5' }) : '') : '') +
+      (i.mode === 'pppoe' ? row(F(P + 'pppoeUser', { l: 'PPPoE username' }), F(P + 'pppoePass', { t: 'pw', l: 'PPPoE password' })) : '') +
+      row(F(P + 'allow', { t: 'chks', l: 'Administrative access', opts: FG.ACCESS, w: 'grow' })) +
+      row(F(P + 'desc', { l: 'Description', w: 'grow' }), F(P + 'mtu', { t: 'num', l: 'MTU override', ph: 'default' }), F(P + 'estUp', { t: 'num', l: 'Upstream kbps', ph: 'optional' }), F(P + 'estDown', { t: 'num', l: 'Downstream kbps', ph: 'optional' }), F(P + 'down', { t: 'chk', cl: 'Administratively down' })) +
+      (i.type !== 'physical' && i.type !== 'switch' ? `<div class="rt">${btn('delintf', 'Delete this interface', `data-i="${ix}"`, 'danger')}</div>` : ''))
+      + (i.mode === 'static' ? card('DHCP server on ' + esc(i.name),
+        row(F(P + 'dhcp.on', { t: 'chk', cl: 'Enable DHCP server', rr: 1 })) + (i.dhcp.on ?
+          row(F(P + 'dhcp.start', { l: 'Range start' }), F(P + 'dhcp.end', { l: 'Range end' }), F(P + 'dhcp.gw', { l: 'Gateway', ph: 'this interface' }), F(P + 'dhcp.lease', { t: 'num', l: 'Lease (s)' })) +
+          row(F(P + 'dhcp.dnsMode', { t: 'sel', l: 'DNS', opts: [['default', 'Same as system DNS'], ['local', 'This FortiGate'], ['specify', 'Specify']], rr: 1 }), i.dhcp.dnsMode === 'specify' ? F(P + 'dhcp.dns1', { l: 'DNS 1' }) + F(P + 'dhcp.dns2', { l: 'DNS 2' }) : '', F(P + 'dhcp.domain', { l: 'Domain' })) +
+          `<h4>Reservations</h4>` + LE('ifaces.' + ix + '.dhcp.res', [{ k: 'mac', l: 'MAC', ph: 'aa:bb:cc:dd:ee:ff' }, { k: 'ip', l: 'IP' }, { k: 'desc', l: 'Description' }], { n: 'res', add: 'Reservation', empty: 'No reservations.', move: false }) : '')) : '');
+  }
+  return card('Interfaces', `<div class="tw"><table class="grid"><thead><tr><th>Name</th><th>Type</th><th>Alias</th><th>Role</th><th>Addressing</th><th>IP / mask</th><th></th><th>Access</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${btn('addintf', '+ VLAN', 'data-t="vlan"', 'primary')} ${btn('addintf', '+ LAG', 'data-t="aggregate"', 'primary')} ${btn('addintf', '+ Loopback', 'data-t="loopback"', 'primary')}`) + detail;
+};
+
+T.zones = d => card('Zones', `<p class="hint">Interfaces placed in a zone can only be referenced through the zone in policies.</p>` + LE('zones', [
+  { k: 'name', l: 'Name' }, { k: 'intrazone', l: 'Intra-zone traffic', t: 'sel', opts: ['allow', 'deny'] }, { k: 'members', l: 'Members', t: 'multi', opts: dd => intfOpts(dd).filter(n => (dd.ifaces.find(x => x.name === n) || {}).type !== 'switch' || true) }, { k: 'comment', l: 'Comment' }], { n: 'zone', add: 'Zone', empty: 'No zones.' }));
+
+T.routes = d => card('Static routes', `<p class="hint">Default and per-VPN routes generated by SD-WAN/IPsec tabs are added automatically and are not listed here.</p>` + LE('routes', [
+  { k: 'en', l: 'On', t: 'chk', w: '40px' }, { k: 'dst', l: 'Destination', ph: '0.0.0.0/0' }, { k: 'gw', l: 'Gateway' },
+  { k: 'dev', l: 'Interface', t: 'sel', opts: dd => [''].concat(FG.intfChoices(dd).filter(x => x !== 'any')) }, { k: 'dist', l: 'Dist', t: 'num', w: '70px' }, { k: 'prio', l: 'Prio', t: 'num', w: '70px' },
+  { k: 'blackhole', l: 'Blackhole', t: 'chk', w: '70px' }, { k: 'comment', l: 'Comment' }], { n: 'route', add: 'Route' }));
+
+/* ---------- SD-WAN ---------- */
+T.sdwan = d => {
+  const sw = d.sdwan, mem = sw.members.map((m, i) => [i + 1, (i + 1) + ': ' + (m.intf || '?')]);
+  let h = card('SD-WAN', row(F('sdwan.on', { t: 'chk', cl: 'Enable SD-WAN', rr: 1 }), F('sdwan.defRoute', { t: 'chk', cl: 'Add default route via each SD-WAN zone' })) + `<p class="hint">With SD-WAN on, member interfaces cannot be used directly in policies or routes; use the zone (virtual-wan-link by default).</p>`);
+  if (!sw.on) return h;
+  h += card('Zones', `<p class="hint"><b>virtual-wan-link</b> always exists. Add extra zones to split underlays.</p>` + LE('sdwan.zones', [{ k: 'name', l: 'Zone name' }], { n: 'sdzone', add: 'Zone', empty: 'Only the default zone.', move: false }));
+  h += card('Members', LE('sdwan.members', [{ k: 'en', l: 'On', t: 'chk', w: '40px' }, { k: 'intf', l: 'Interface', t: 'sel', opts: dd => [''].concat(intfOpts(dd).concat(dd.vpns.map(v => v.name))) }, { k: 'gw', l: 'Gateway', ph: 'blank for DHCP' }, { k: 'zone', l: 'Zone', t: 'sel', opts: dd => FG.sdwanZones(dd) }, { k: 'cost', l: 'Cost', t: 'num', w: '70px' }], { n: 'sdmember', add: 'Member', move: false }));
+  h += card('Performance SLAs (health checks)', LE('sdwan.hcs', [
+    { k: 'name', l: 'Name' }, { k: 'proto', l: 'Protocol', t: 'sel', opts: ['ping', 'http', 'dns'], rr: 1 }, { k: 'server', l: 'Server', ph: '1.1.1.1' }, { k: 'interval', l: 'Interval ms', t: 'num', w: '90px' }, { k: 'failtime', l: 'Fail', t: 'num', w: '60px' }, { k: 'recovery', l: 'Recover', t: 'num', w: '70px' },
+    { k: 'slaOn', l: 'SLA', t: 'chk', w: '45px' }, { k: 'lat', l: 'Lat ms', t: 'num', w: '75px' }, { k: 'jit', l: 'Jit ms', t: 'num', w: '75px' }, { k: 'loss', l: 'Loss %', t: 'num', w: '70px' }], { n: 'sdhc', add: 'Health check', move: false }));
+  h += card('SD-WAN rules', `<p class="hint">Member order = priority (click order in the picker). <b>SLA</b> mode uses the chosen health check's thresholds.</p>` + LE('sdwan.rules', [
+    { k: 'name', l: 'Name' }, { k: 'dst', l: 'Destination', t: 'multi', opts: dd => FG.addrChoices(dd) }, { k: 'proto', l: 'Proto', t: 'sel', opts: ['any', 'tcp', 'udp'], w: '75px' }, { k: 'ports', l: 'Port(s)', ph: '443 or 80-90', w: '90px' },
+    { k: 'mode', l: 'Mode', t: 'sel', opts: [['manual', 'Manual'], ['sla', 'SLA']], w: '90px' }, { k: 'hc', l: 'Health check', t: 'sel', opts: dd => [''].concat(dd.sdwan.hcs.map(x => x.name)) }, { k: 'members', l: 'Members (priority)', t: 'multi', opts: () => mem }], { n: 'sdrule', add: 'Rule' }));
+  return h;
+};
+
+/* ---------- BGP / OSPF ---------- */
+T.dynrt = d => {
+  let h = card('BGP', row(F('bgp.on', { t: 'chk', cl: 'Enable BGP', rr: 1 })) + (d.bgp.on ? row(F('bgp.as', { t: 'num', l: 'Local AS' }), F('bgp.rid', { l: 'Router ID' }), F('bgp.redistConn', { t: 'chk', cl: 'Redistribute connected' }), F('bgp.redistStatic', { t: 'chk', cl: 'Redistribute static' })) +
+    '<h4>Neighbors</h4>' + LE('bgp.neighbors', [{ k: 'ip', l: 'Neighbor IP' }, { k: 'ras', l: 'Remote AS', t: 'num', w: '90px' }, { k: 'desc', l: 'Description' }, { k: 'src', l: 'Update source', t: 'sel', opts: dd => intfOptsAny(dd).concat(dd.vpns.map(v => v.name)) }, { k: 'pw', l: 'Password' }, { k: 'multihop', l: 'Multihop', t: 'chk', w: '65px' }, { k: 'softre', l: 'Soft-reconf', t: 'chk', w: '75px' }], { n: 'bgpn', add: 'Neighbor', move: false }) +
+    '<h4>Networks</h4>' + LE('bgp.networks', [{ k: 'prefix', l: 'Prefix', ph: '10.0.0.0/24' }], { n: 'net', add: 'Network', move: false }) : ''));
+  h += card('OSPF', row(F('ospf.on', { t: 'chk', cl: 'Enable OSPF', rr: 1 })) + (d.ospf.on ? row(F('ospf.rid', { l: 'Router ID' }), F('ospf.defOrig', { t: 'chk', cl: 'Originate default' }), F('ospf.redistConn', { t: 'chk', cl: 'Redistribute connected' }), F('ospf.redistStatic', { t: 'chk', cl: 'Redistribute static' })) +
+    row(F('ospf.passive', { t: 'multi', l: 'Passive interfaces', opts: intfOpts(d) })) + '<h4>Networks</h4>' + LE('ospf.networks', [{ k: 'prefix', l: 'Prefix', ph: '10.0.0.0/24' }, { k: 'area', l: 'Area' }], { n: 'net', add: 'Network', move: false }) : ''));
+  return h + `<p class="hint">Route-maps, prefix-lists and authentication are not generated; add them by hand after applying.</p>`;
+};
+
+/* ---------- policies ---------- */
+const polSummary = p => { const n = Object.keys(FG.PROFILES).filter(k => p[k]).length; return n ? `<span class="pill blue">${n} profile${n > 1 ? 's' : ''}</span>` : ''; };
+T.policies = d => {
+  const P = d.policies, sel = Math.min(UI.sel.pol == null ? 0 : UI.sel.pol, P.length - 1); UI.sel.pol = sel; const p = P[sel];
+  const tr = P.map((x, i) => `<tr class="sel${i === sel ? ' on' : ''}" data-act="pick" data-key="pol" data-val="${i}"><td>${i + 1}</td><td><b>${esc(x.name || '(unnamed)')}</b>${x.en === false ? ' <span class="pill gray">off</span>' : ''}</td><td>${esc((x.src || []).join(', '))}</td><td>${esc((x.dst || []).join(', '))}</td><td>${esc((x.srcaddr || []).join(', '))}</td><td>${esc((x.dstaddr || []).join(', '))}</td><td>${esc((x.svc || []).join(', '))}</td><td><span class="pill ${x.action === 'accept' ? 'green' : 'red'}">${x.action}</span></td><td>${x.nat ? 'NAT' : ''}</td><td>${polSummary(x)}</td><td class="ra nw">${btn('mv', '↑', `data-path="policies" data-i="${i}" data-dir="-1"`, 'ico')}${btn('mv', '↓', `data-path="policies" data-i="${i}" data-dir="1"`, 'ico')}${btn('clone', '⧉', `data-path="policies" data-i="${i}"`, 'ico')}${btn('del', '✕', `data-path="policies" data-i="${i}"`, 'ico danger')}</td></tr>`).join('');
+  let h = card('Firewall policy', `<div class="tw"><table class="grid"><thead><tr><th>#</th><th>Name</th><th>From</th><th>To</th><th>Source</th><th>Destination</th><th>Service</th><th>Action</th><th>NAT</th><th>Security</th><th></th></tr></thead><tbody>${tr || '<tr><td colspan="11" class="empty">No policies. Implicit deny applies.</td></tr>'}</tbody></table></div>${btn('add', '+ New policy', 'data-path="policies" data-new="policy" data-select="pol"', 'primary')}${FG.vpnDerive(d).policies.length ? `<span class="hint"> + ${FG.vpnDerive(d).policies.length} auto-generated by IPsec tunnels (appended after these).</span>` : ''}`);
+  if (!p) return h;
+  const B = 'policies.' + sel + '.', ic = FG.intfChoices(d), ac = FG.addrChoices(d), sc = FG.svcChoices(d);
+  h += card('Edit policy ' + (sel + 1),
+    row(F(B + 'name', { l: 'Name (max 35)' }), F(B + 'action', { t: 'sel', l: 'Action', opts: ['accept', 'deny'], rr: 1 }), F(B + 'en', { t: 'chk', cl: 'Enabled' }), F(B + 'log', { t: 'sel', l: 'Log', opts: [['all', 'All sessions'], ['utm', 'Security events'], ['disable', 'Disabled']] })) +
+    row(F(B + 'src', { t: 'multi', l: 'Incoming interface', opts: ic }), F(B + 'dst', { t: 'multi', l: 'Outgoing interface', opts: ic }), F(B + 'srcaddr', { t: 'multi', l: 'Source', opts: ac }), F(B + 'dstaddr', { t: 'multi', l: 'Destination', opts: ac }), F(B + 'svc', { t: 'multi', l: 'Service', opts: sc })) +
+    (p.action === 'accept' ? row(F(B + 'nat', { t: 'chk', cl: 'NAT (use outgoing interface address)', rr: 1 }), p.nat ? F(B + 'ippool', { t: 'sel', l: 'IP pool', opts: dd => [['', 'Outgoing interface address']].concat(dd.pools.map(x => x.name)) }) : '') : '') +
+    row(F(B + 'comment', { l: 'Comments', w: 'grow' })));
+  if (p.action === 'accept') {
+    const L = d.lic;
+    h += card('Security profiles', `<div class="bundles">${btn('profset', 'None', 'data-k="none"')}${btn('profset', 'Everything licensed (defaults)', 'data-k="all"')}${btn('profset', 'Outbound web (AV+WF+App+IPS)', 'data-k="web"')}</div>` +
+      row(F(B + 'mode', { t: 'sel', l: 'Inspection mode', opts: ['flow', 'proxy'] }), F(B + 'ssl', { t: 'sel', l: 'SSL inspection', opts: [['', 'certificate-inspection (default)']].concat(FG.SSL.slice(1)) })) +
+      `<div class="frow">${Object.keys(FG.PROFILES).map(k => { const pr = FG.PROFILES[k]; return L[pr.lic] ? F(B + k, { t: 'combo', l: pr.n, opts: [''].concat(pr.opts), ph: 'off' }) : `<div class="fld"><label>${pr.n}</label><div class="lock">needs license</div></div>`; }).join('')}</div>`);
+  }
+  return h;
+};
+
+/* ---------- objects ---------- */
+T.addrs = d => card('Addresses', `<p class="hint">Subnet: 10.0.0.0/24. Range: 10.0.0.10-10.0.0.50. FQDN: host.example.com. Geography: 2-letter country code. <b>all</b> is built in.</p>` + LE('addrs', [
+  { k: 'name', l: 'Name' }, { k: 'type', l: 'Type', t: 'sel', opts: ['subnet', 'iprange', 'fqdn', 'geography'], w: '110px' }, { k: 'val', l: 'Value', ph: it => ({ subnet: '10.0.0.0/24', iprange: '10.0.0.10-10.0.0.50', fqdn: 'host.example.com', geography: 'US' }[it.type]) }, { k: 'comment', l: 'Comment' }], { n: 'addr', add: 'Address' })) +
+  card('Address groups', LE('addrgrps', [{ k: 'name', l: 'Name' }, { k: 'members', l: 'Members', t: 'multi', opts: dd => dd.addrs.map(a => a.name).filter(Boolean) }, { k: 'comment', l: 'Comment' }], { n: 'addrgrp', add: 'Group' }));
+T.svcs = d => card('Custom services', `<p class="hint">Ports: <code>443</code>, <code>8000-8010</code>, or a space-separated list. Common services (HTTP, HTTPS, DNS, SSH, RDP, SMB...) are built in.</p>` + LE('svcs', [{ k: 'name', l: 'Name' }, { k: 'tcp', l: 'TCP ports' }, { k: 'udp', l: 'UDP ports' }, { k: 'comment', l: 'Comment' }], { n: 'svc', add: 'Service' })) +
+  card('Service groups', LE('svcgrps', [{ k: 'name', l: 'Name' }, { k: 'members', l: 'Members', t: 'multi', opts: dd => FG.svcChoices(dd) }, { k: 'comment', l: 'Comment' }], { n: 'svcgrp', add: 'Group' }));
+T.vips = d => card('Virtual IPs (destination NAT)', `<p class="hint">Use a VIP as the <b>Destination</b> of an inbound policy (incoming = WAN, outgoing = the internal interface).</p>` + LE('vips', [
+  { k: 'name', l: 'Name' }, { k: 'extip', l: 'External IP' }, { k: 'extintf', l: 'Ext. interface', t: 'sel', opts: dd => ['any'].concat(intfOpts(dd)) }, { k: 'mappedip', l: 'Mapped IP' }, { k: 'pf', l: 'Port fwd', t: 'chk', w: '60px', rr: 1 },
+  { k: 'proto', l: 'Proto', t: 'sel', opts: ['tcp', 'udp'], w: '70px', show: it => it.pf }, { k: 'extport', l: 'Ext. port', w: '85px', show: it => it.pf }, { k: 'mappedport', l: 'Mapped port', w: '90px', show: it => it.pf }, { k: 'comment', l: 'Comment' }], { n: 'vip', add: 'Virtual IP' }));
+T.pools = d => card('IP pools (source NAT)', LE('pools', [{ k: 'name', l: 'Name' }, { k: 'type', l: 'Type', t: 'sel', opts: ['overload', 'one-to-one'] }, { k: 'start', l: 'Start IP' }, { k: 'end', l: 'End IP' }, { k: 'comment', l: 'Comment' }], { n: 'pool', add: 'Pool' }));
+
+/* ---------- IPsec ---------- */
+T.ipsec = d => {
+  const V = d.vpns, sel = Math.min(UI.sel.vpn == null ? 0 : UI.sel.vpn, V.length - 1); UI.sel.vpn = sel; const v = V[sel];
+  let h = card('IPsec tunnels (route-based)', `<div class="tw"><table class="grid"><thead><tr><th>Name</th><th>Remote</th><th>Interface</th><th>IKE</th><th>Local → Remote</th><th></th></tr></thead><tbody>${V.map((x, i) => `<tr class="sel${i === sel ? ' on' : ''}" data-act="pick" data-key="vpn" data-val="${i}"><td><b>${esc(x.name)}</b></td><td>${esc(x.type === 'dynamic' ? 'dial-up' : x.gw)}</td><td>${esc(x.intf)}</td><td>v${x.ike}</td><td class="mono">${esc(x.localSubs)} → ${esc(x.remoteSubs)}</td><td class="ra">${btn('del', '✕', `data-path="vpns" data-i="${i}"`, 'ico danger')}</td></tr>`).join('') || '<tr><td colspan="6" class="empty">No tunnels.</td></tr>'}</tbody></table></div>${btn('add', '+ Site-to-site tunnel', 'data-path="vpns" data-new="vpn" data-select="vpn"', 'primary')}`);
+  if (!v) return h;
+  const B = 'vpns.' + sel + '.';
+  h += card('Edit tunnel ' + esc(v.name),
+    row(F(B + 'name', { l: 'Name (max 15)' }), F(B + 'type', { t: 'sel', l: 'Remote gateway', opts: [['static', 'Static IP'], ['ddns', 'Dynamic DNS'], ['dynamic', 'Dial-up (accepts any)']], rr: 1 }), v.type !== 'dynamic' ? F(B + 'gw', { l: v.type === 'ddns' ? 'Remote FQDN' : 'Remote IP' }) : '', F(B + 'intf', { t: 'sel', l: 'Outgoing interface', opts: dd => [''].concat(intfOpts(dd)) })) +
+    row(F(B + 'ike', { t: 'sel', l: 'IKE', opts: [[2, 'IKEv2'], [1, 'IKEv1']] }), F(B + 'psk', { t: 'pw', l: 'Pre-shared key', w: 'grow' }), btn('genpsk', 'Generate', `data-path="${B}psk"`)) +
+    row(F(B + 'p1prop', { t: 'sel', l: 'Phase 1 proposal', opts: ['aes256-sha256', 'aes256-sha384', 'aes128-sha256', 'aes256-sha512'] }), F(B + 'dh', { t: 'sel', l: 'Phase 1 DH group', opts: ['14', '15', '16', '19', '20', '21'] }), F(B + 'keylife', { t: 'num', l: 'Phase 1 lifetime (s)' }), F(B + 'dpd', { t: 'sel', l: 'DPD', opts: ['on-idle', 'on-demand', 'disable'] }), F(B + 'nat', { t: 'chk', cl: 'NAT traversal' })) +
+    row(F(B + 'p2prop', { t: 'sel', l: 'Phase 2 proposal', opts: ['aes256-sha256', 'aes256-sha384', 'aes128-sha256', 'aes256gcm', 'aes128gcm'] }), F(B + 'pfs', { t: 'chk', cl: 'PFS', rr: 1 }), v.pfs ? F(B + 'p2dh', { t: 'sel', l: 'PFS DH group', opts: ['14', '15', '16', '19', '20', '21'] }) : '', F(B + 'p2life', { t: 'num', l: 'Phase 2 lifetime (s)' })) +
+    row(F(B + 'localSubs', { t: 'area', l: 'Local subnets (comma or newline)', rows: 2, w: 'grow' }), F(B + 'remoteSubs', { t: 'area', l: 'Remote subnets', rows: 2, w: 'grow' })) +
+    row(F(B + 'tunLocal', { l: 'Tunnel local IP (optional)', ph: '169.254.1.1' }), F(B + 'tunRemote', { l: 'Tunnel remote IP (optional)', ph: '169.254.1.2' }), F(B + 'comment', { l: 'Comment' })) +
+    `<h4>Generated alongside</h4>` + row(F(B + 'addRoute', { t: 'chk', cl: 'Static route to remote subnets via tunnel', rr: 1 }), v.addRoute ? F(B + 'blackhole', { t: 'chk', cl: 'plus blackhole route (distance 254)' }) + F(B + 'routeDist', { t: 'num', l: 'Route distance' }) : '') +
+    row(F(B + 'addPolicies', { t: 'chk', cl: 'Allow policies in both directions', rr: 1 }), v.addPolicies ? F(B + 'polIntf', { t: 'sel', l: 'Local interface/zone', opts: dd => FG.intfChoices(dd).filter(x => x !== v.name) }) + F(B + 'log', { t: 'sel', l: 'Log', opts: ['all', 'utm', 'disable'] }) : ''));
+  return h;
+};
+
+T.remote = d => {
+  const R = d.ra, sel = Math.min(UI.sel.ra == null ? 0 : UI.sel.ra, R.length - 1); UI.sel.ra = sel; const r = R[sel], who = d.users.map(u => u.name).concat(d.radius.map(x => x.name));
+  let h = card('Users & authentication', `<p class="hint">Passwords are written in clear text into the script (the FortiGate encrypts them on entry). For MFA, authenticate against a RADIUS server that provides it.</p>` +
+    '<h4>Local users</h4>' + LE('users', [{ k: 'name', l: 'Username' }, { k: 'pw', l: 'Password', t: 'pw' }, { k: 'email', l: 'Email (optional)' }], { n: 'user', add: 'User', move: false }) +
+    '<h4>RADIUS servers</h4>' + LE('radius', [{ k: 'name', l: 'Name' }, { k: 'server', l: 'Server IP/FQDN' }, { k: 'secret', l: 'Shared secret', t: 'pw' }], { n: 'radius', add: 'RADIUS server', move: false }) +
+    '<h4>User groups</h4>' + LE('ugroups', [{ k: 'name', l: 'Group' }, { k: 'members', l: 'Members (users / RADIUS servers)', t: 'multi', opts: () => who }], { n: 'ugroup', add: 'Group', move: false }));
+  h += card('FortiClient IPsec dial-up', `<div class="tw"><table class="grid"><thead><tr><th>Name</th><th>Interface</th><th>Group</th><th>Client pool</th><th>Split tunnel</th><th></th></tr></thead><tbody>${R.map((x, i) => `<tr class="sel${i === sel ? ' on' : ''}" data-act="pick" data-key="ra" data-val="${i}"><td><b>${esc(x.name)}</b></td><td>${esc(x.intf)}</td><td>${esc(x.group)}</td><td class="mono">${esc(x.start)} - ${esc(x.end)}</td><td>${(x.split || []).length ? esc(x.split.join(', ')) : '<span class="pill amber">full tunnel</span>'}</td><td class="ra">${btn('del', '✕', `data-path="ra" data-i="${i}"`, 'ico danger')}</td></tr>`).join('') || '<tr><td colspan="6" class="empty">No dial-up tunnels.</td></tr>'}</tbody></table></div>${btn('add', '+ Dial-up tunnel', 'data-path="ra" data-new="ra" data-select="ra"', 'primary')}`);
+  if (!r) return h;
+  const B = 'ra.' + sel + '.';
+  h += card('Edit ' + esc(r.name), row(F(B + 'name', { l: 'Tunnel name (max 15)' }), F(B + 'intf', { t: 'sel', l: 'Listen on interface', opts: dd => [''].concat(intfOpts(dd)) }), F(B + 'group', { t: 'sel', l: 'XAuth user group', opts: dd => [''].concat(dd.ugroups.map(g => g.name)) }), F(B + 'savePw', { t: 'chk', cl: 'Let FortiClient save password' })) +
+    row(F(B + 'psk', { t: 'pw', l: 'Pre-shared key (shared by all clients)', w: 'grow' }), btn('genpsk', 'Generate', `data-path="${B}psk"`), F(B + 'prop', { t: 'sel', l: 'Proposals', opts: ['aes256-sha256 aes128-sha256', 'aes256-sha256', 'aes128-sha256', 'aes256-sha384'] }), F(B + 'dh', { t: 'sel', l: 'DH group', opts: ['14', '15', '16', '19', '20', '21'] })) +
+    row(F(B + 'start', { l: 'Client pool start' }), F(B + 'end', { l: 'Client pool end' }), F(B + 'mask', { l: 'Netmask' }), F(B + 'dns1', { l: 'DNS 1 for clients' }), F(B + 'dns2', { l: 'DNS 2' })) +
+    row(F(B + 'split', { t: 'multi', l: 'Split-tunnel networks (blank = full tunnel)', opts: dd => dd.addrs.map(a => a.name).filter(Boolean).concat(dd.addrgrps.map(a => a.name)) }), F(B + 'dest', { t: 'multi', l: 'Policy destination (blank = split list / all)', opts: dd => FG.addrChoices(dd) }), F(B + 'lanIntf', { t: 'sel', l: 'Policy outgoing interface', opts: dd => FG.intfChoices(dd).filter(x => x !== r.name) }), F(B + 'log', { t: 'sel', l: 'Log', opts: ['all', 'utm', 'disable'] })) +
+    row(F(B + 'comment', { l: 'Comment', w: 'grow' })) + `<p class="hint">Generates IKEv1 aggressive-mode + XAuth (PSK), a client-pool address object and one policy from the tunnel to the chosen interface. Create the split-tunnel networks on the Addresses tab first.</p>`);
+  return h;
+};
+
+/* ---------- system ---------- */
+T.system = d => card('Global settings',
+  row(F('sys.hostname', { l: 'Hostname' }), F('sys.tz', { t: 'combo', l: 'Time zone', opts: FG.TZ, h: '7.x: names like US/Eastern. 6.4: numeric ID.' }), F('sys.admintimeout', { t: 'num', l: 'Admin idle timeout (min)' })) +
+  row(F('sys.httpsPort', { t: 'num', l: 'HTTPS admin port' }), F('sys.httpPort', { t: 'num', l: 'HTTP admin port' }), F('sys.sshPort', { t: 'num', l: 'SSH port' })) +
+  row(F('sys.httpsRedirect', { t: 'chk', cl: 'Redirect HTTP admin to HTTPS' }), F('sys.lockout', { t: 'chk', cl: 'Admin lockout (5 tries / 300 s)' }), F('sys.strongCrypto', { t: 'chk', cl: 'Strong crypto' })) +
+  row(F('sys.banner', { t: 'area', l: 'Pre-login banner (blank = none)', rows: 2, w: 'grow' }))) +
+  card('DNS & NTP', row(F('sys.dns1', { l: 'Primary DNS' }), F('sys.dns2', { l: 'Secondary DNS' }), F('sys.domain', { l: 'Local domain' })) +
+    row(F('sys.ntpOn', { t: 'chk', cl: 'Sync time from NTP', rr: 1 }), d.sys.ntpOn ? F('sys.ntp', { l: 'NTP servers (comma separated)', w: 'grow' }) : '') +
+    row(F('sys.ntpSrv', { t: 'chk', cl: 'FortiGate serves NTP to clients', rr: 1 }), d.sys.ntpSrv ? F('sys.ntpIntfs', { t: 'multi', l: 'Serve on', opts: intfOpts(d) }) : '')) +
+  card('FortiManager', row(F('sys.fmg', { l: 'FortiManager IP/FQDN (blank = none)' })) + `<p class="hint">Also tick <code>fgfm</code> under administrative access on the interface that reaches it.</p>`);
+T.admins = d => card('Administrators', `<p class="hint">Passwords are written in clear text into the script and encrypted by the FortiGate on entry. Treat the .conf as a secret.</p>` +
+  row(F('sys.adminPw', { t: 'pw', l: 'Password for built-in "admin"' }), btn('genpw', 'Generate', 'data-path="sys.adminPw"'), F('sys.adminTrust', { l: 'Trusted hosts for "admin" (comma separated CIDRs)', w: 'grow' })) +
+  '<h4>Additional administrators</h4>' + LE('admins', [{ k: 'name', l: 'Name' }, { k: 'pw', l: 'Password', t: 'pw' }, { k: 'profile', l: 'Profile', t: 'sel', opts: ['super_admin', 'prof_admin', 'super_admin_readonly'] }, { k: 'trust', l: 'Trusted hosts' }, { k: 'comment', l: 'Comment' }], { n: 'admin', add: 'Administrator', move: false }));
+T.snmp = d => card('SNMP', row(F('snmp.on', { t: 'chk', cl: 'Enable SNMP agent', rr: 1 })) + (d.snmp.on ? row(F('snmp.desc', { l: 'Description' }), F('snmp.contact', { l: 'Contact' }), F('snmp.loc', { l: 'Location' })) +
+  '<h4>v1/v2c communities</h4>' + LE('snmp.comms', [{ k: 'name', l: 'Community' }, { k: 'hosts', l: 'Allowed hosts (comma separated)' }], { n: 'comm', add: 'Community', move: false }) +
+  '<h4>v3 users</h4>' + LE('snmp.v3', [{ k: 'name', l: 'User' }, { k: 'level', l: 'Level', t: 'sel', opts: ['no-auth-no-priv', 'auth-no-priv', 'auth-priv'], rr: 1 }, { k: 'auth', l: 'Auth', t: 'sel', opts: ['sha', 'sha256', 'sha384', 'sha512'] }, { k: 'authPw', l: 'Auth password', t: 'pw' }, { k: 'priv', l: 'Priv', t: 'sel', opts: ['aes', 'aes256'] }, { k: 'privPw', l: 'Priv password', t: 'pw' }], { n: 'v3', add: 'v3 user', move: false }) : ''));
+T.logging = d => card('Syslog', row(F('syslog.on', { t: 'chk', cl: 'Send logs to syslog server', rr: 1 })) + (d.syslog.on ? row(F('syslog.server', { l: 'Server' }), F('syslog.port', { t: 'num', l: 'Port' }), F('syslog.mode', { t: 'sel', l: 'Transport', opts: ['udp', 'legacy-reliable', 'reliable'] }), F('syslog.facility', { t: 'sel', l: 'Facility', opts: ['local0', 'local1', 'local2', 'local3', 'local4', 'local5', 'local6', 'local7', 'kernel', 'user'] }), F('syslog.format', { t: 'sel', l: 'Format', opts: ['default', 'csv', 'cef', 'rfc5424', 'json'] })) : '')) +
+  card('FortiAnalyzer', row(F('faz.on', { t: 'chk', cl: 'Send logs to FortiAnalyzer', rr: 1 })) + (d.faz.on ? row(F('faz.server', { l: 'Server' }), F('faz.upload', { t: 'sel', l: 'Upload', opts: ['realtime', '1-minute', '5-minute', 'store-and-upload'] })) : '')) +
+  card('FortiGate Cloud', row(F('fgcloud', { t: 'chk', cl: 'Send logs to FortiGate Cloud (needs subscription)' })));
+T.ha = d => card('High availability', row(F('ha.on', { t: 'chk', cl: 'Enable HA on this unit', rr: 1 })) + (d.ha.on ? row(F('ha.mode', { t: 'sel', l: 'Mode', opts: [['a-p', 'Active-Passive'], ['a-a', 'Active-Active'], ['standalone', 'Standalone']] }), F('ha.group', { l: 'Group name' }), F('ha.id', { t: 'num', l: 'Group ID' }), F('ha.pw', { t: 'pw', l: 'Password' }), btn('genpw', 'Generate', 'data-path="ha.pw"')) +
+  row(F('ha.prio', { t: 'num', l: 'Priority (higher = primary)' }), F('ha.hb', { t: 'multi', l: 'Heartbeat interfaces', opts: intfOpts(d) }), F('ha.mon', { t: 'multi', l: 'Monitored interfaces', opts: intfOpts(d) })) +
+  row(F('ha.pickup', { t: 'chk', cl: 'Session pickup' }), F('ha.override', { t: 'chk', cl: 'Override' })) +
+  `<p class="hint">Make a second device with <b>Clone</b> in the top bar, set a different hostname and a lower priority, and export both. The primary pushes the rest of the config to the secondary.</p>` : ''));
+
+/* ======================= rendering ======================= */
+function renderTop() {
+  $('devbar').innerHTML = S.devices.map((x, i) => `<button class="dev${i === S.cur ? ' on' : ''}" data-act="dev" data-i="${i}"><b>${esc(x.sys.hostname || 'device')}</b><small>${esc(x.model)} · ${esc(x.version)}</small></button>`).join('') +
+    `<button class="dev add" data-act="devadd">+ Device</button><button class="dev add" data-act="devclone">Clone</button>${S.devices.length > 1 ? '<button class="dev add danger" data-act="devdel">Remove</button>' : ''}`;
+  $('proj').value = S.name;
+}
+function renderNav() {
+  $('nav').innerHTML = NAV.map(([g, it]) => `<div class="ng">${g}</div>` + it.map(([k, l]) => `<a href="#" class="ni${UI.tab === k ? ' on' : ''}" data-act="tab" data-k="${k}">${l}</a>`).join('')).join('');
+}
+function renderMain() { const d = D(); $('main').innerHTML = T[UI.tab](d); }
+function hl(txt) {
+  return esc(txt).split('\n').map(l => {
+    if (/^\s*#/.test(l)) return '<span class="c">' + l + '</span>';
+    return l.replace(/^(\s*)(config|end|edit|next)\b(.*)$/, (m, a, k, r) => a + '<span class="k">' + k + '</span>' + r).replace(/^(\s*)(set|unset|delete)\b/, '$1<span class="s">$2</span>');
+  }).join('\n');
+}
+function renderOut() {
+  const d = D(); const txt = FG.gen(d, { comments: UI.comments, date: new Date().toISOString().slice(0, 10) }); UI.text = txt;
+  const R = FG.validate(d), ne = R.filter(r => r.l === 'err').length, nw = R.filter(r => r.l === 'warn').length;
+  $('otabs').innerHTML = `<button class="ot${UI.outTab === 'cli' ? ' on' : ''}" data-act="otab" data-k="cli">CLI script <small>${txt.split('\n').length - 1} lines</small></button><button class="ot${UI.outTab === 'chk' ? ' on' : ''}" data-act="otab" data-k="chk">Checks ${ne ? `<span class="bd red">${ne}</span>` : ''}${nw ? `<span class="bd amber">${nw}</span>` : ''}${!ne && !nw ? '<span class="bd green">ok</span>' : ''}</button>`;
+  $('cli').style.display = UI.outTab === 'cli' ? '' : 'none'; $('chk').style.display = UI.outTab === 'chk' ? '' : 'none';
+  $('cli').innerHTML = hl(txt);
+  $('chk').innerHTML = R.length ? R.sort((a, b) => 'err warn info'.indexOf(a.l) - 'err warn info'.indexOf(b.l)).map(r => `<div class="ck ${r.l}"><b>${{ err: 'Error', warn: 'Warning', info: 'Note' }[r.l]}</b> ${esc(r.m)}</div>`).join('') : '<div class="ck info">No findings.</div>';
+}
+function renderAll() { renderTop(); renderNav(); renderMain(); renderOut(); save(); }
+let tm; const refresh = () => { renderOut(); clearTimeout(tm); tm = setTimeout(save, 400); };
+
+/* ======================= events ======================= */
+document.addEventListener('input', onChange); document.addEventListener('change', onChange);
+function onChange(e) {
+  const t = e.target;
+  if (t.id === 'proj') { S.name = t.value; save(); return; }
+  if (t.id === 'cmt') { UI.comments = t.checked; renderOut(); return; }
+  const p = t.dataset && t.dataset.p; if (!p) return;
+  if (e.type === 'input' && (t.type === 'checkbox' || t.tagName === 'SELECT')) return;
+  const d = D();
+  if (t.dataset.set !== undefined) {
+    const cur = (getp(d, p) || []).slice(), v = t.dataset.set, ix = cur.indexOf(v);
+    if (t.checked && ix < 0) cur.push(v); if (!t.checked && ix >= 0) cur.splice(ix, 1);
+    setp(d, p, cur);
+    if (t.dataset.ms) { const sm = t.closest('details').querySelector('summary'); sm.textContent = cur.length ? cur.join(', ') : 'none'; }
+  } else if (t.type === 'checkbox') setp(d, p, t.checked);
+  else if (t.type === 'number') setp(d, p, t.value === '' ? '' : +t.value);
+  else setp(d, p, t.value);
+  if (p === 'model') { d.portsText = FG.model(d).ports; FG.syncPorts(d); d.dissolveLan = true; }
+  if (p === 'portsText') FG.syncPorts(d);
+  if (/ifaces\.\d+\.name$/.test(p)) { UI.sel.ifaces = t.value; }
+  if (p === 'sys.hostname') renderTop();
+  if (t.dataset.rr && (e.type === 'change')) { renderMain(); renderTop(); }
+  refresh();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('details.ms')) document.querySelectorAll('details.ms[open]').forEach(x => x.removeAttribute('open'));
+  const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act, d = D(), ds = b.dataset;
+  if (a === 'tab') { e.preventDefault(); UI.tab = ds.k; renderNav(); renderMain(); return; }
+  if (a === 'otab') { UI.outTab = ds.k; renderOut(); return; }
+  if (a === 'pick') { UI.sel[ds.key] = ds.key === 'ifaces' ? ds.val : +ds.val; renderMain(); return; }
+  if (a === 'add') { const arr = getp(d, ds.path); arr.push(NEW[ds.new]()); if (ds.select) UI.sel[ds.select] = arr.length - 1; if (ds.new === 'vpn') arr[arr.length - 1].intf = (FG.act(d).find(i => i.role === 'wan') || {}).name || ''; if (ds.new === 'policy') { const w = FG.act(d).find(i => i.role === 'wan'), l = FG.act(d).find(i => i.role === 'lan'); arr[arr.length - 1].src = l ? [l.name] : []; arr[arr.length - 1].dst = w ? [w.name] : []; arr[arr.length - 1].name = 'Policy-' + arr.length; } renderMain(); refresh(); return; }
+  if (a === 'del') { const arr = getp(d, ds.path); arr.splice(+ds.i, 1); renderMain(); refresh(); return; }
+  if (a === 'mv') { const arr = getp(d, ds.path), i = +ds.i, j = i + +ds.dir; if (j >= 0 && j < arr.length) { [arr[i], arr[j]] = [arr[j], arr[i]]; if (ds.path === 'policies') UI.sel.pol = j; } renderMain(); refresh(); return; }
+  if (a === 'clone') { const arr = getp(d, ds.path), c = JSON.parse(JSON.stringify(arr[+ds.i])); c.name = (c.name || 'policy') + '-copy'; arr.splice(+ds.i + 1, 0, c); UI.sel.pol = +ds.i + 1; renderMain(); refresh(); return; }
+  if (a === 'addintf') { const t = ds.t; let n = t === 'vlan' ? 'VLAN' + (10 * (d.ifaces.filter(i => i.type === 'vlan').length + 1)) : t === 'aggregate' ? 'LAG' + (d.ifaces.filter(i => i.type === 'aggregate').length + 1) : 'Loopback' + d.ifaces.filter(i => i.type === 'loopback').length;
+    const i = FG.newIface(n, t); i.mode = 'static'; i.role = t === 'vlan' ? 'lan' : 'undefined'; if (t === 'vlan') { i.parent = (FG.act(d).find(x => x.role !== 'wan' && x.type === 'physical') || FG.act(d)[0]).name; i.vid = 10 * (d.ifaces.filter(x => x.type === 'vlan').length + 1); } d.ifaces.push(i); UI.sel.ifaces = n; renderMain(); refresh(); return; }
+  if (a === 'delintf') { d.ifaces.splice(+ds.i, 1); UI.sel.ifaces = null; renderMain(); refresh(); return; }
+  if (a === 'bundle') { d.lic = {}; FG.BUNDLES[ds.b].forEach(k => d.lic[k] = true); renderMain(); refresh(); return; }
+  if (a === 'tmpl') { FG.applyTemplate(d, ds.k); UI.sel.ifaces = null; UI.sel.pol = 0; renderMain(); refresh(); return; }
+  if (a === 'profset') { const p = d.policies[UI.sel.pol]; Object.keys(FG.PROFILES).forEach(k => p[k] = ''); if (ds.k !== 'none') (ds.k === 'web' ? ['av', 'web', 'app', 'ips'] : Object.keys(FG.PROFILES)).forEach(k => { if (d.lic[FG.PROFILES[k].lic]) p[k] = FG.PROFILES[k].opts[0]; }); renderMain(); refresh(); return; }
+  if (a === 'genpsk' || a === 'genpw') { setp(d, ds.path, genPsk()); renderMain(); refresh(); return; }
+  if (a === 'dev') { S.cur = +ds.i; UI.sel = {}; renderAll(); return; }
+  if (a === 'devadd') { S.devices.push(FG.newDevice('FG-60F')); S.devices[S.devices.length - 1].sys.hostname = 'FW-0' + S.devices.length; S.cur = S.devices.length - 1; UI.sel = {}; UI.tab = 'device'; renderAll(); return; }
+  if (a === 'devclone') { const c = JSON.parse(JSON.stringify(d)); c.id = 'd' + Date.now(); c.sys.hostname = d.sys.hostname.replace(/(\d+)$/, n => String(+n + 1)); if (c.sys.hostname === d.sys.hostname) c.sys.hostname += '-2'; c.ha.prio = Math.max(1, (+d.ha.prio || 128) - 28); S.devices.splice(S.cur + 1, 0, c); S.cur++; renderAll(); return; }
+  if (a === 'devdel') { S.devices.splice(S.cur, 1); S.cur = Math.max(0, S.cur - 1); UI.sel = {}; renderAll(); return; }
+  if (a === 'copy') { copyText(UI.text, b); return; }
+  if (a === 'dlone') { saveFile((d.sys.hostname || 'fortigate') + '.conf', UI.text); return; }
+  if (a === 'dlall') { const files = S.devices.map(x => ({ name: (x.sys.hostname || 'fortigate') + '.conf', data: FG.gen(x, { comments: UI.comments, date: new Date().toISOString().slice(0, 10) }) })); saveFile((S.name || 'firewalls').replace(/\W+/g, '_') + '.zip', zip(files)); return; }
+  if (a === 'dlproj') { saveFile((S.name || 'project').replace(/\W+/g, '_') + '.fgproject.json', JSON.stringify(S, null, 1)); return; }
+  if (a === 'loadproj') { $('file').click(); return; }
+});
+$('file').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const x = JSON.parse(r.result); if (!x.devices || !x.devices.length) throw 0; x.devices.forEach(FG.migrate); S = x; S.cur = 0; UI.sel = {}; renderAll(); toast('Project loaded'); } catch (er) { toast('Not a valid project file'); } }; r.readAsText(f); e.target.value = ''; });
+
+/* ======================= file output ======================= */
+function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
+function copyText(txt, b) {
+  const done = () => toast('Copied to clipboard');
+  const fallback = () => { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove(); ok ? done() : toast('Copy blocked: select the CLI text and copy manually'); };
+  try { navigator.clipboard.writeText(txt).then(done, fallback); } catch (e) { fallback(); }
+}
+async function saveFile(name, data) {
+  if (UI.dl) {
+    const nm = name.endsWith('.conf') ? name + '.txt' : name.endsWith('.fgproject.json') ? name : name;
+    try { await UI.dl.save({ filename: nm, data }); toast('Saved ' + nm + (name.endsWith('.conf') ? ' (rename to .conf if desired)' : '')); } catch (e) { if (!e || e.code !== 'declined') toast('Download unavailable here: use Copy'); }
+    return;
+  }
+  try { const bl = new Blob([data], { type: 'application/octet-stream' }), u = URL.createObjectURL(bl), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 3000); } catch (e) { toast('Download failed: use Copy'); }
+}
+const crcT = (() => { const t = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = u => { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = crcT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cd = []; let off = 0;
+  const u16 = n => [n & 255, (n >> 8) & 255], u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  files.forEach(f => {
+    const nb = enc.encode(f.name), db = enc.encode(f.data), crc = crc32(db);
+    const lh = new Uint8Array([0x50, 0x4b, 3, 4, 20, 0, 0, 8, 0, 0, 0, 0, 0x21, 0, ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), 0, 0]);
+    parts.push(lh, nb, db);
+    cd.push(new Uint8Array([0x50, 0x4b, 1, 2, 20, 0, 20, 0, 0, 8, 0, 0, 0, 0, 0x21, 0, ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...u32(off)]), nb);
+    off += lh.length + nb.length + db.length;
+  });
+  const cdl = cd.reduce((a, x) => a + x.length, 0);
+  const end = new Uint8Array([0x50, 0x4b, 5, 6, 0, 0, 0, 0, ...u16(files.length), ...u16(files.length), ...u32(cdl), ...u32(off), 0, 0]);
+  return new Blob(parts.concat(cd, [end]), { type: 'application/zip' });
+}
+
+/* ======================= init ======================= */
+window.__FGUI = { S: () => S, UI, T, renderAll, setTab: k => { UI.tab = k; renderAll(); }, zip };
+if (!load()) S.devices.push(FG.newDevice('FG-60F'));
+renderAll();
+try { if (window.claude && claude.use) claude.use('downloads').then(x => { UI.dl = x || null; }, () => {}); } catch (e) {}
+})();
+</script>
+</body>
+</html>

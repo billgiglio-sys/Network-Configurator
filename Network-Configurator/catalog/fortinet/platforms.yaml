@@ -1,0 +1,19 @@
+platforms:
+  - id: fortigate_60f
+    category: firewall
+    family: fortigate
+    models: [FG-60F, FG-61F]
+    os_family: fortios
+    versions: ['7.2', '7.4', '7.6']
+    renderer: fortinet/fortios/firewall.j2
+    lifecycle: current
+    capabilities: [firewall, nat, ipsec, sdwan, ospf, bgp, ha]
+  - id: fortigate_100f
+    category: firewall
+    family: fortigate
+    models: [FG-100F, FG-101F]
+    os_family: fortios
+    versions: ['7.2', '7.4', '7.6']
+    renderer: fortinet/fortios/firewall.j2
+    lifecycle: current
+    capabilities: [firewall, nat, ipsec, sdwan, ospf, bgp, ha]

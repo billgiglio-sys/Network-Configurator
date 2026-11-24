@@ -1,0 +1,85 @@
+schema_version: '0.1'
+project:
+  id: BILL-HOME-LAB
+  name: Bill Cisco and Fortinet Home Lab
+  environment: lab
+defaults:
+  domain_name: lab.example.net
+  ntp:
+    servers: [{address: 10.10.10.20, preferred: true}]
+  syslog:
+    servers: [{address: 10.10.10.30}]
+sites:
+  home: {name: Home Lab, timezone: America/New_York}
+networks:
+  mgmt: {name: Management, vlan: {id: 10, name: MGMT}, ipv4: {subnet: 10.10.10.0/24, gateway: 10.10.10.1}}
+  clients: {name: Clients, vlan: {id: 20, name: CLIENTS}, ipv4: {subnet: 10.10.20.0/24, gateway: 10.10.20.1}}
+  iot: {name: IoT, vlan: {id: 40, name: IOT}, ipv4: {subnet: 10.10.40.0/24, gateway: 10.10.40.1}}
+devices:
+  fw01:
+    name: HOME-FW01
+    vendor: fortinet
+    category: firewall
+    platform: {family: fortigate, model: FG-60F}
+    software: {family: fortios, version: '7.4'}
+    renderer: fortinet/fortios/firewall.j2
+    vendor_extensions: {operation_mode: nat, vdom: root}
+  sw01:
+    name: HOME-SW01
+    vendor: cisco
+    category: switch
+    platform: {family: catalyst_3850, model: WS-C3850-48P}
+    software: {family: ios_xe, version: 16.12.16}
+    renderer: cisco/ios-xe/switch.j2
+  wlc01:
+    name: HOME-WLC01
+    vendor: cisco
+    category: wireless_controller
+    platform: {family: '3504', model: AIR-CT3504-K9}
+    software: {family: aireos, version: 8.10.196.0}
+    renderer: cisco/aireos/controller.j2
+  ap01:
+    name: HOME-AP01
+    vendor: cisco
+    category: access_point
+    platform: {family: catalyst_9100, model: C9130AXI-B, vid: V03}
+    software: {family: managed_ap, version: controller}
+    renderer: cisco/aireos/managed-ap.j2
+port_profiles:
+  ap_access:
+    ethernet: {mode: access, access_network: mgmt}
+    poe: {enabled: true}
+    spanning_tree: {portfast: true, bpdu_guard: true}
+interfaces:
+  sw01:
+    GigabitEthernet1/0/1: {description: FortiGate uplink, ethernet: {mode: trunk, trunk: {allowed_networks: [mgmt, clients, iot]}}}
+    GigabitEthernet1/0/2: {description: 3504 WLC uplink, ethernet: {mode: trunk, trunk: {allowed_networks: [mgmt, clients, iot]}}}
+    GigabitEthernet1/0/10: {description: Catalyst 9130AX, profile: ap_access, ethernet: {mode: access, access_network: mgmt}}
+  fw01:
+    port1: {description: Catalyst uplink, ethernet: {mode: trunk, trunk: {allowed_networks: [mgmt, clients, iot]}}}
+  wlc01:
+    GigabitEthernet0/0: {description: Catalyst uplink, ethernet: {mode: trunk, trunk: {allowed_networks: [mgmt, clients, iot]}}}
+  ap01:
+    GigabitEthernet0: {description: Switch connection, ethernet: {mode: access, access_network: mgmt}}
+links:
+  - {id: FW-SW, endpoint_a: {device: fw01, interface: port1}, endpoint_b: {device: sw01, interface: GigabitEthernet1/0/1}}
+  - {id: WLC-SW, endpoint_a: {device: wlc01, interface: GigabitEthernet0/0}, endpoint_b: {device: sw01, interface: GigabitEthernet1/0/2}}
+  - {id: AP-SW, endpoint_a: {device: ap01, interface: GigabitEthernet0}, endpoint_b: {device: sw01, interface: GigabitEthernet1/0/10}}
+relationships:
+  - {type: wireless_controller, parent: wlc01, child: ap01}
+  - {type: default_gateway, network: mgmt, device: fw01}
+  - {type: default_gateway, network: clients, device: fw01}
+  - {type: default_gateway, network: iot, device: fw01}
+wireless:
+  wlans:
+    - name: HOME-CORP
+      ssid: HOME-LAB
+      network: clients
+      security: {authentication: personal, protocol: wpa2_wpa3_transition, pmf: optional, secret_ref: secrets/wlan/corp}
+    - name: HOME-IOT
+      ssid: HOME-IOT
+      network: iot
+      security: {authentication: personal, protocol: wpa2, pmf: optional, secret_ref: secrets/wlan/iot}
+routing: {}
+security_policies: []
+validation: {mode: strict}

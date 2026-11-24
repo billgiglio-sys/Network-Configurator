@@ -1,0 +1,8 @@
+compatibility:
+  - id: c3504-c9130ax-810
+    controller_family: '3504'
+    controller_versions: [8.10.196.0]
+    ap_family: catalyst_9100
+    ap_models: [C9130AXI-B, C9130AXE-B]
+    status: supported
+    review: Verify AP hardware VID and regulatory domain against the exact release notes.

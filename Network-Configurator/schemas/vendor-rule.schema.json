@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/billgiglio-sys/Network-Configurator/schemas/vendor-rule.schema.json",
+  "title":"Network Configurator Vendor Rule",
+  "type":"object",
+  "required":["vendor_rule_schema","rule","scope","intent","configuration","verification","rollback","validation_rules","renderer","sources","research_metadata"],
+  "properties":{
+    "vendor_rule_schema":{"const":"0.1"},
+    "rule":{"type":"object","required":["id","title","vendor","domain","feature","status","confidence"],"properties":{"id":{"type":"string","minLength":1},"title":{"type":"string"},"description":{"type":"string"},"vendor":{"enum":["cisco","fortinet"]},"domain":{"type":"string"},"feature":{"type":"string"},"status":{"enum":["validated","partially_validated","unverified","unsupported","conflicting_documentation"]},"confidence":{"enum":["high","medium","low"]}}},
+    "scope":{"type":"object","required":["product_families","models","software"],"properties":{"product_families":{"type":"array"},"models":{"type":"object"},"hardware_revisions":{"type":"object"},"software":{"type":"object"},"operating_modes":{"type":"array"},"environments":{"type":"array"}}},
+    "capabilities":{"type":"object"},"licensing":{"type":"object"},"compatibility":{"type":"object"},"lifecycle":{"type":"object"},"intent":{"type":"object"},"configuration":{"type":"object"},"verification":{"type":"object"},"rollback":{"type":"object"},
+    "validation_rules":{"type":"array"},
+    "renderer":{"type":"object","required":["eligible","renderer_family","template_name","review_required"],"properties":{"eligible":{"type":"boolean"},"renderer_family":{"type":"string"},"template_name":{"type":"string"},"required_inputs":{"type":"array"},"optional_inputs":{"type":"array"},"secret_inputs":{"type":"array"},"output_sections":{"type":"array"},"review_required":{"type":"boolean"}}},
+    "security":{"type":"object"},"sources":{"type":"array"},"unresolved_questions":{"type":"array"},"research_metadata":{"type":"object"}
+  }
+}
