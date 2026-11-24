@@ -1,3 +1,8 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Network Configurator</title><link rel="stylesheet" href="/assets/app.css"></head><body>
-<header><b>Network <span>Configurator</span></b><input id="projectName"><button id="validate">Validate</button><button id="bundle">Deployment bundle</button></header>
-<div id="deviceBar"></div><div class="layout"><nav><button data-tab="project" class="on">Project</button><button data-tab="devices">Devices</button><button data-tab="networks">Networks</button><button data-tab="wireless">Wireless</button><button data-tab="topology">Topology</button></nav><main id="main"></main><aside><div class="tabs"><button id="cliTab" class="on">CLI</button><button id="checkTab">Checks</button></div><select id="outputDevice"></select><pre id="cli"></pre><div id="checks"></div></aside></div><script src="/assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Network Configurator</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body>
+<header><b>Network <span>Configurator</span></b><input id="projectName" aria-label="Project name"><span id="dirty" title="Unsaved changes"></span><button id="newProject">New</button><button id="openProject">Open</button><button id="saveProject">Save YAML</button><button id="validate">Validate</button><button id="bundle">Deployment bundle</button><input id="projectFile" type="file" accept=".yaml,.yml" hidden></header>
+<div id="status" aria-live="polite"></div><div id="deviceBar"></div>
+<div class="layout"><nav><button data-tab="project" class="on">Project</button><button data-tab="devices">Devices</button><button data-tab="networks">Networks</button><button data-tab="interfaces">Interfaces</button><button data-tab="wireless">Wireless</button><button data-tab="topology">Topology</button></nav><main id="main"></main><aside><div class="tabs"><button id="cliTab" class="on">CLI</button><button id="checkTab">Checks</button></div><select id="outputDevice"></select><pre id="cli"></pre><div id="checks"></div></aside></div>
+<script src="/assets/app.js"></script>
+</body></html>
